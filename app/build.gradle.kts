@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "nz.co.zsd.floatingvolume"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "nz.co.zsd.floatingvolume"
         minSdk = 28
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_docked_overlay"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="@color/design_default_color_primary"
+    android:animateLayoutChanges="true"
+    tools:context="nz.co.zsd.floatingvolume.OverlayView">
+
+    <ImageView
+        android:id="@+id/dragIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_launcher_foreground" />
+
+    <ImageView
+        android:id="@+id/stopServiceBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_launcher_background"
+        android:onClick="OverlayView.VolumeUp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true" />
+
+    <ImageView
+        android:id="@+id/togglePowerSaveBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true" />
+
+
+    <ImageView
+        android:id="@+id/collapseBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_launcher_foreground" />
+</LinearLayout>
