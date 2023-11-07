@@ -1,9 +1,9 @@
 package nz.co.zsd.floatingvolume
 
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.os.CountDownTimer
-import android.provider.MediaStore.Audio
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -95,33 +95,43 @@ class OverlayView(context: Context) : View(context) {
                 }
             })
 
-        overlay.findViewById<ImageView>(R.id.stopServiceBtn).setOnClickListener {
-            Log.e(javaClass.simpleName, "Volume up button pressed")
+        overlay.findViewById<ImageView>(R.id.volumeUp).setOnClickListener {
+            Log.d(javaClass.simpleName, "Volume up button pressed")
             VolumeUp()
+        }
+        overlay.findViewById<ImageView>(R.id.volumeDown).setOnClickListener {
+            Log.d(javaClass.simpleName, "Volume down button pressed")
+            VolumeDown()
+        }
+        overlay.findViewById<ImageView>(R.id.exitOverlay).setOnClickListener {
+            Log.d(javaClass.simpleName, "Exit button pressed")
+            ExitOverlay()
         }
     }
 
     /**
      * Increase the volume of the device (current most relevant stream)
      */
-    fun VolumeUp () {
+    private fun VolumeUp () {
         val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
         Log.i(javaClass.simpleName, "Current volume is $currentVol. Increase called")
-        manager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI)
+        manager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND)
     }
 
-    fun VolumeDown () {
+    private fun VolumeDown () {
         val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
         Log.i(javaClass.simpleName, "Current volume is $currentVol. Decrease called")
-        manager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI)
+        manager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND)
     }
 
-    /**
-     * Remove the overlay from the screen and free any resources
-     */
-    public fun destroy() {
+    private fun ExitOverlay() {
+        Log.i(javaClass.simpleName, "Exit button pressed. Stopping overlay.")
+        context.stopService(Intent(context, OverlayService::class.java))
+    }
+
+    fun destroy() {
         windowManager.removeView(overlay)
     }
 }

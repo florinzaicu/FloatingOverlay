@@ -11,6 +11,10 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
+
+
 
 class OverlayService : Service() {
     private var overlay: OverlayView? = null
@@ -85,5 +89,20 @@ class OverlayService : Service() {
         // If the overlay already exists don't create a new instance
         if (overlay != null) return
         overlay = OverlayView(this)
+    }
+
+    override fun onDestroy() {
+        Log.d(javaClass.simpleName, "SERVICE: OnDestroy, cleaning up")
+        hideOverlay()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    private fun hideOverlay() {
+        if (overlay == null) return
+        Log.d(javaClass.simpleName, "SERVICE: Hiding overlay (not null)")
+
+        // Restore the brightness and destroy the old overlay
+        overlay!!.destroy()
+        overlay = null
     }
 }

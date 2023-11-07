@@ -5,41 +5,42 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:padding="@dimen/material_item_spacing_small"
     android:background="@color/design_default_color_primary"
-    android:animateLayoutChanges="true"
-    tools:context="nz.co.zsd.floatingvolume.OverlayView">
+    tools:context=".OverlayView"
+    android:animateLayoutChanges="true">
 
     <ImageView
         android:id="@+id/dragIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_launcher_foreground" />
+        android:layout_width="@dimen/material_item_spacing_double"
+        android:layout_height="@dimen/material_item_spacing_double"
+        android:layout_marginEnd="@dimen/material_item_spacing_small"
+        android:src="@drawable/ic_drag_pan" />
 
     <ImageView
-        android:id="@+id/stopServiceBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_launcher_background"
-        android:onClick="OverlayView.VolumeUp"
+        android:id="@+id/volumeDown"
+        android:layout_width="@dimen/material_item_spacing_double"
+        android:layout_height="@dimen/material_item_spacing_double"
+        android:layout_marginEnd="@dimen/material_item_spacing_small"
+        android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true" />
+        android:src="@drawable/ic_volume_down" />
 
     <ImageView
-        android:id="@+id/togglePowerSaveBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_launcher_foreground"
+        android:id="@+id/volumeUp"
+        android:layout_width="@dimen/material_item_spacing_double"
+        android:layout_height="@dimen/material_item_spacing_double"
+        android:layout_marginEnd="@dimen/material_item_spacing_small"
+        android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true" />
-
+        android:src="@drawable/ic_volume_up" />
 
     <ImageView
-        android:id="@+id/collapseBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_launcher_foreground" />
+        android:id="@+id/exitOverlay"
+        android:layout_width="@dimen/material_item_spacing_double"
+        android:layout_height="@dimen/material_item_spacing_double"
+        android:layout_marginEnd="@dimen/material_item_spacing_small"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_close" />
 </LinearLayout>

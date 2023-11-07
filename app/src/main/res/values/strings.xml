@@ -8,22 +8,33 @@
         the application will not work on your device.
     </string>
     <string name="perm_req_modify_btn">Grant Permission</string>
-    <string name="perm_req_overlay">Draw over other Apps</string>
-    <string name="perm_req_overlay_msg">
-        The application will draw an overlay over other apps when the docked mode service is running
-        to keep the screen on.
-    </string>
-    <string name="perm_req_mod_setting">Modify System Settings</string>
-    <string name="perm_req_mod_setting_msg">
-        The application will use this permission to change the screen brightness mode and level.
-    </string>
-    <string name="perm_req_exit_msg">If you wish to close the application please press the back button.</string>
 
-    <string name="perm_granted_overlay_msg">You have granted the overlay permission! The
-        application will draw an overlay over other apps when the docked mode service is running to
-        keep the screen on.
+    <string name="perm_req_notify">Display Persistent Notification</string>
+    <string name="perm_req_notify_msg">
+        The application shows a persistent notification while the overlay is visible.
     </string>
-    <string name="perm_granted_settings_msg">You have granted the settings permission! The
-        application will use this permission to change the screen brightness mode and level.
+    <string name="perm_granted_notify_msg">
+        You have granted the notification permission! The application will use this permission
+        to shows a persistent notification while the overlay is visible.
     </string>
+
+    <string name="perm_req_foreground">Foreground Service</string>
+    <string name="perm_req_foreground_msg">
+        The application uses a foreground service to display a floating overlay with controls.
+    </string>
+    <string name="perm_granted_foreground_msg">
+        You have granted the foreground service permission! The application uses a foreground
+        service to display a floating overlay with controls.
+    </string>
+
+    <string name="perm_req_overlay">Draw Over Other Apps</string>
+    <string name="perm_req_overlay_msg">
+        The application will draw an overlay with controls over other applications.
+    </string>
+    <string name="perm_granted_overlay_msg">
+        You have granted the draw over other apps permission! The application will draw an overlay
+        with controls over other applications.
+    </string>
+
+    <string name="perm_req_exit_msg">If you wish to close the application please press the back button.</string>
 </resources>
