@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Required permission to start a foreground service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"  />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" android:minSdkVersion="34" />
-    <!-- Show a persistent notification for service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"
+        android:minSdkVersion="34" /> <!-- Show a persistent notification for service -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Draw on-top of other apps (create overlay) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -21,6 +21,10 @@
         android:theme="@style/Theme.FloatingOverlay"
         tools:targetApi="34">
         <activity
+            android:name=".PermissionCheckActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -28,14 +32,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- Register the floating overlay service -->
 
-        <!-- Register the floating overlay service -->
         <service
             android:name=".OverlayService"
             android:foregroundServiceType="specialUse">
-            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Display overlay on screen with buttons to execute configured actions"/>
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Display overlay on screen with buttons to execute configured actions" />
         </service>
     </application>
 

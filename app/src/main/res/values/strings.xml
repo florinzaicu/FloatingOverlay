@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Floating Overlay</string>
+
+    <!-- Permissions activity strings -->
+    <string name="perm_req_heading">Permission Required</string>
+    <string name="perm_req_message">
+        This app requires extra permissions to be able to run. If the permissions are not granted
+        the application will not work on your device.
+    </string>
+    <string name="perm_req_modify_btn">Grant Permission</string>
+    <string name="perm_req_overlay">Draw over other Apps</string>
+    <string name="perm_req_overlay_msg">
+        The application will draw an overlay over other apps when the docked mode service is running
+        to keep the screen on.
+    </string>
+    <string name="perm_req_mod_setting">Modify System Settings</string>
+    <string name="perm_req_mod_setting_msg">
+        The application will use this permission to change the screen brightness mode and level.
+    </string>
+    <string name="perm_req_exit_msg">If you wish to close the application please press the back button.</string>
+
+    <string name="perm_granted_overlay_msg">You have granted the overlay permission! The
+        application will draw an overlay over other apps when the docked mode service is running to
+        keep the screen on.
+    </string>
+    <string name="perm_granted_settings_msg">You have granted the settings permission! The
+        application will use this permission to change the screen brightness mode and level.
+    </string>
 </resources>

@@ -12,7 +12,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        // Check if application has all required permissions, if not show permission activity
+        PermissionCheckActivity.checkPermissions(this)
+    }
+
     fun startOverlayService (v: View) {
-        startForegroundService(Intent(this, OverlayService::class.java))
+        //startForegroundService(Intent(this, OverlayService::class.java))
+        PermissionCheckActivity.checkPermissions(this)
     }
 }
