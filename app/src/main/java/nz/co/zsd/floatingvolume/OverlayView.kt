@@ -15,8 +15,10 @@ import android.widget.ImageView
 import androidx.core.content.getSystemService
 
 
+/**
+ * View that defines the components of the floating overlay and its controls
+ */
 class OverlayView(context: Context) : View(context) {
-
     // Window manager that displays the overlay
     private val windowManager = context.getSystemService<WindowManager>()!!
     // Instance of the overlay currently displayed on the window manager
@@ -95,6 +97,7 @@ class OverlayView(context: Context) : View(context) {
                 }
             })
 
+        // Bind click actions to the overlay buttons
         overlay.findViewById<ImageView>(R.id.volumeUp).setOnClickListener {
             Log.d(javaClass.simpleName, "Volume up button pressed")
             VolumeUp()
@@ -116,21 +119,30 @@ class OverlayView(context: Context) : View(context) {
         val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
         Log.i(javaClass.simpleName, "Current volume is $currentVol. Increase called")
-        manager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND)
+        manager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI)
     }
 
+    /**
+     * Decrease the volume of the device (current most relevant stream)
+     */
     private fun VolumeDown () {
         val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
         Log.i(javaClass.simpleName, "Current volume is $currentVol. Decrease called")
-        manager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND)
+        manager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI)
     }
 
+    /**
+     * Exit the overlay by stopping the overlay service
+     */
     private fun ExitOverlay() {
         Log.i(javaClass.simpleName, "Exit button pressed. Stopping overlay.")
         context.stopService(Intent(context, OverlayService::class.java))
     }
 
+    /**
+     * Destroy the view by removing it from the window manager
+     */
     fun destroy() {
         windowManager.removeView(overlay)
     }
