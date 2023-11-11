@@ -19,7 +19,7 @@ jobs:
   gradle-make-debug:
     runs-on: ubuntu-latest
     steps:
-      # Check out project and install depdencies
+      # Check out project and install dependencies
       - name: Checkout project
         uses: actions/checkout@v3              
       - name: Install JDK 18
