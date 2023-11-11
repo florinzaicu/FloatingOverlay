@@ -2,8 +2,10 @@ name: develop-rc-build
 run-name: Release Candidate APK Build
 on:
     push:
-        branches:
-            - develop
+      branches:
+        - develop
+      paths-ignore:
+        - '.github/**'
 env:
   # Version of compiled APK
   APK_VERSION: ""
@@ -14,40 +16,41 @@ env:
   # Output path of all compiled artifacts to publish
   PUB_PATH: "PUB_OUT"
 jobs:
-    gradle-make-debug:
-        runs-on: ubuntu-latest
-        steps:
-            # Check out project and install depdencies
-            - name: Checkout project
-              uses: actions/checkout@v3              
-            - name: Install JDK 18
-              uses: actions/setup-java@v3
-              with:
-                  java-version: 18
-                  distribution : 'temurin'
-                  cache: gradle
-            - name: Setup gradle wrapper
-              run: chmod +x gradlew
+  gradle-make-debug:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out project and install depdencies
+      - name: Checkout project
+        uses: actions/checkout@v3              
+      - name: Install JDK 18
+        uses: actions/setup-java@v3
+        with:
+          java-version: 18
+          distribution : 'temurin'
+          cache: gradle
+      - name: Setup gradle wrapper
+        run: chmod +x gradlew
 
-            # Build APK
-            - name: Create Debug APK
-              run: ./gradlew assembleDebug
+      # Build APK
+      - name: Create Debug APK
+        run: ./gradlew assembleDebug
 
-            # Extract APK version from output metadata file and prepare compiled file for publishing
-            - name : Get compiled app version from output metadata file
-              run: |
-                out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`;
-                echo "APK_VERSION=$out" >> "$GITHUB_ENV"
-            
-            - name: "Preparing compiled APK for publishing (Version: ${{ env.APK_VERSION }})"
-              run: |
-                mkdir $PUB_PATH;
-                mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk"
+      # Extract APK version from output metadata file and prepare compiled file for publishing
+      - name : Get compiled app version from output metadata file
+        run: |
+          out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`;
+          echo "APK_VERSION=$out" >> "$GITHUB_ENV"
 
-            # Publish the artifact
-            - name: Publish compiled APK (app${{ env.APK_VERSION }}.apk)
-              uses: actions/upload-artifact@v3
-              with:
-                  name: app${{ env.APK_VERSION }}.apk
-                  path: ${{ env.PUB_PATH}}
-                  if-no-files-found: error
+      - name: "Preparing compiled APK for publishing (Version: ${{ env.APK_VERSION }})"
+        run: |
+          mkdir $PUB_PATH;
+          mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk"
+
+      # Publish the artifact
+      - name: Publish compiled APK (app${{ env.APK_VERSION }}.apk)
+        uses: actions/upload-artifact@v3
+        with:
+          name: app${{ env.APK_VERSION }}.apk
+          path: ${{ env.PUB_PATH}}
+          retention-days: 5
+          if-no-files-found: error

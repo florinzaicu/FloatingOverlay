@@ -17,9 +17,33 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("../../ANDROID_KEYSTORE/debug_keystore.jks")
+            keyAlias = "app.floatingoverlay"
+            storePassword = property("store_pass") as String ?: ""
+            keyPassword = property("key_pass") as String ?: ""
+        }
+        create("release") {
+            storeFile = file("../../ANDROID_KEYSTORE/main_keystore.jks")
+            keyAlias = "app.floatingoverlay"
+            storePassword = property("store_pass") as String ?: ""
+            keyPassword = property("key_pass") as String ?: ""
+        }
+    }
+
     buildTypes {
-        release {
+        getByName("debug") {
             isMinifyEnabled = false
+            versionNameSuffix = "-RC"
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
