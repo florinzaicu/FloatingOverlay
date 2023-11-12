@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">Floating Overlay</string>
 
+    <!-- Main activity strings -->
+    <string name="main_instructions_heading">How to Use</string>
+    <string name="main_instructions_text">
+        This application will display a floating overlay with controls that allow changing the system
+        volume. The application uses a foreground task to show the overlay, and can be closed by
+        pressing the exit button on the overlay itself, or by using the close action of the persistent
+        foreground service notification.
+        \n\n
+        To show the overlay, press the show overlay button.
+    </string>
+
     <!-- Permissions activity strings -->
     <string name="perm_req_heading">Permission Required</string>
     <string name="perm_req_message">
