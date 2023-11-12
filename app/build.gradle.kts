@@ -19,16 +19,28 @@ android {
 
     signingConfigs {
         getByName("debug") {
-            storeFile = file("../../ANDROID_KEYSTORE/debug_keystore.jks")
-            keyAlias = "app.floatingoverlay"
-            storePassword = property("store_pass") as String ?: ""
-            keyPassword = property("key_pass") as String ?: ""
+            // If keystore path provided sign the debug APK, otherwise generate unsigned
+            if (properties.containsKey("debug_keystore")) {
+                println("Signing debug APK")
+                storeFile = file(properties["debug_keystore"] as String)
+                keyAlias = properties.getOrDefault("key_alias", "app.floatingoverlay") as String
+                storePassword = properties.getOrDefault("store_pass", "") as String
+                keyPassword = properties.getOrDefault("key_pass", "") as String
+            } else {
+                println("No keystore file path property. Generating unsigned debug APK")
+            }
         }
         create("release") {
-            storeFile = file("../../ANDROID_KEYSTORE/main_keystore.jks")
-            keyAlias = "app.floatingoverlay"
-            storePassword = property("store_pass") as String ?: ""
-            keyPassword = property("key_pass") as String ?: ""
+            // If keystore path provided sign the release APK, otherwise generate unsigned
+            if (properties.containsKey("release_keystore")) {
+                println("Signing release APK")
+                storeFile = file(properties["release_keystore"] as String)
+                keyAlias = properties.getOrDefault("key_alias", "app.floatingoverlay") as String
+                storePassword = properties.getOrDefault("store_pass", "") as String
+                keyPassword = properties.getOrDefault("key_pass", "") as String
+            } else {
+                println("No keystore file path property. Generating unsigned debug APK")
+            }
         }
     }
 
@@ -57,7 +69,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
