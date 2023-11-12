@@ -44,7 +44,7 @@ jobs:
 
       # Build APK
       - name: Create Debug APK
-        run: ./gradlew assembleDebug -Pdebug_keystore=${{ env.KEY_PATH}}/debug.jks -Pkey_alias=app.floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
+        run: ./gradlew assembleDebug -Pdebug_keystore=../${{ env.KEY_PATH}}/debug.jks -Pkey_alias=app.floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
         env:
           STORE_PASS: ${{ secrets.DEBUG_KEYSTORE_PASS }}
           KEY_PASS: ${{ secrets.DEBUG_KEYSTORE_KEY_PASS }}
@@ -53,12 +53,12 @@ jobs:
       - name : Get compiled app version from output metadata file
         run: |
           out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`;
-          echo "APK_VERSION=$out" >> "$GITHUB_ENV"
+          echo "APK_VERSION=$out" >> "$GITHUB_ENV";
 
       - name: "Preparing compiled APK for publishing (Version: ${{ env.APK_VERSION }})"
         run: |
           mkdir $PUB_PATH;
-          mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk"
+          mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk";
 
       # Publish the artifact
       - name: Publish compiled APK (app${{ env.APK_VERSION }}.apk)
