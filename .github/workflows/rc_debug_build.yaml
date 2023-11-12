@@ -1,11 +1,12 @@
 name: develop-rc-build
 run-name: Release Candidate APK Build
 on:
-    push:
-      branches:
-        - develop
-      paths-ignore:
-        - '.github/**'
+  push:
+    branches:
+      - develop
+    # paths-ignore:
+    #   - '.github/**'
+  workflow_dispatch:
 env:
   # Version of compiled APK
   APK_VERSION: ""
@@ -15,6 +16,8 @@ env:
   APK_COMPILE_PATH: "app/build/outputs/apk/debug/app-debug.apk"
   # Output path of all compiled artifacts to publish
   PUB_PATH: "PUB_OUT"
+  # Keystore path
+  KEY_PATH: "KEYSTORE"
 jobs:
   gradle-make-debug:
     runs-on: ubuntu-latest
@@ -31,19 +34,30 @@ jobs:
       - name: Setup gradle wrapper
         run: chmod +x gradlew
 
+      # Inject the keystore for signing the APK
+      - name: Injecting keystore file
+        run: |
+          mkdir "${{ env.KEY_PATH }}"
+          echo $DEBUG_KEYSTORE | base64 --decode > "${{ env.KEY_PATH}}/debug.jks"
+        env:
+          DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
+
       # Build APK
       - name: Create Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -Pdebug_keystore=../${{ env.KEY_PATH}}/debug.jks -Pkey_alias=app.floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
+        env:
+          STORE_PASS: ${{ secrets.DEBUG_KEYSTORE_PASS }}
+          KEY_PASS: ${{ secrets.DEBUG_KEYSTORE_KEY_PASS }}
 
       # Extract APK version from output metadata file and prepare compiled file for publishing
       - name : Get compiled app version from output metadata file
         run: |
-          out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`;
+          out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`
           echo "APK_VERSION=$out" >> "$GITHUB_ENV"
 
       - name: "Preparing compiled APK for publishing (Version: ${{ env.APK_VERSION }})"
         run: |
-          mkdir $PUB_PATH;
+          mkdir $PUB_PATH
           mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk"
 
       # Publish the artifact
