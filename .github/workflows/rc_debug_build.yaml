@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - develop
-    paths-ignore:
-      - '.github/**'
+    # paths-ignore:
+    #   - '.github/**'
   workflow_dispatch:
 env:
   # Version of compiled APK
@@ -37,8 +37,8 @@ jobs:
       # Inject the keystore for signing the APK
       - name: Injecting keystore file
         run: |
-          mkdir "${{ env.KEY_PATH }}";
-          echo $DEBUG_KEYSTORE | base64 --decode > "${{ env.KEY_PATH}}/debug.jks";
+          mkdir "${{ env.KEY_PATH }}"
+          echo $DEBUG_KEYSTORE | base64 --decode > "${{ env.KEY_PATH}}/debug.jks"
         env:
           DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
 
@@ -52,13 +52,13 @@ jobs:
       # Extract APK version from output metadata file and prepare compiled file for publishing
       - name : Get compiled app version from output metadata file
         run: |
-          out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`;
-          echo "APK_VERSION=$out" >> "$GITHUB_ENV";
+          out=`grep "versionName" "$APK_META_PATH" | awk '/"([^"]+)"/{ print $2 }' | cut -d'"' -f 2`
+          echo "APK_VERSION=$out" >> "$GITHUB_ENV"
 
       - name: "Preparing compiled APK for publishing (Version: ${{ env.APK_VERSION }})"
         run: |
-          mkdir $PUB_PATH;
-          mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk";
+          mkdir $PUB_PATH
+          mv "$APK_COMPILE_PATH" "${{ env.PUB_PATH }}/app${{ env.APK_VERSION }}.apk"
 
       # Publish the artifact
       - name: Publish compiled APK (app${{ env.APK_VERSION }}.apk)
