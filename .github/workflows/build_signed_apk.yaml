@@ -4,11 +4,8 @@ on:
   workflow_call:
     inputs:
       compile_type:
-        type: choice
+        type: string
         description: Type of APK build
-        options:
-          - debug
-          - release
 
 env:
   # Version of compiled APK (extracted post compilation from meta file)
