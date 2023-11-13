@@ -15,8 +15,10 @@ jobs:
   # Release published RC APK
   release_rc:
     runs-on: ubuntu-latest
+    needs:
+      build_debug_apk
     steps:
       - name: Test
         run: echo "$artifact_name"!
         env:
-          artifact_name: ${{ needs.jobs.build_debug_apk.outputs.apk_name }}
+          artifact_name: ${{ needs.build_debug_apk.outputs.apk_name }}

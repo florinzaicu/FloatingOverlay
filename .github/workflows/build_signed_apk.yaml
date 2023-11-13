@@ -10,7 +10,7 @@ on:
     outputs:
       apk_name:
         description: "Path of compiled signed APK artifact"
-        value: ${{ jobs.build_apk.result.steps.pub_artifact.outputs.name }}
+        value: ${{ jobs.build_apk.outputs.apk_name }}
 
 env:
   # Version of compiled APK (extracted post compilation from meta file)
@@ -26,6 +26,8 @@ env:
 jobs:
   build_apk:
     runs-on: ubuntu-latest
+    outputs:
+      apk_name: ${{ steps.pub_artifact.outputs.ARTIFACT_NAME }}
     steps:
       # Check out project and install dependencies
       - name: Checkout project
@@ -80,10 +82,14 @@ jobs:
 
       # Publish the artifact
       - name: Publish compiled APK (app${{ env.APK_VERSION }}.apk)
-        id: pub_artifact
         uses: actions/upload-artifact@v3
         with:
           name: app${{ env.APK_VERSION }}.apk
           path: ${{ env.PUB_PATH}}
           retention-days: 5
           if-no-files-found: error
+
+      - name: Output artifact name
+        id: pub_artifact
+        run: echo "ARTIFACT_NAME=app${{ env.APK_VERSION }}.apk" >> "$GITHUB_OUTPUT"
+  
