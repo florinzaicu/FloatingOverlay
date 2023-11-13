@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         // Check if application has all required permissions, if not show permission activity
+        Log.d(javaClass.simpleName, "Resumed main activity. Checking permissions")
         PermissionCheckActivity.checkPermissions(this)
     }
 

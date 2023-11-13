@@ -10,10 +10,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-
 
 class PermissionCheckActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -167,13 +165,19 @@ class PermissionCheckActivity : AppCompatActivity() {
         /* ------ PERMISSION CHECK HELPER METHODS ----- */
 
         /**
-         * Check if application has permission to show notifications for the overlay service
+         * Check if application has permission to show notifications for the overlay service. POST
+         * notification permission was added in Android 33 and above. For all other versions, just
+         * return true (permission will be implicitly granted).
          * @return Boolean: True if permission granted, false otherwise
          */
-        private fun hasNotifyPerm(app: Activity): Boolean = (
-                app.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) ==
-                        android.content.pm.PackageManager.PERMISSION_GRANTED
-                )
+        private fun hasNotifyPerm(app: Activity): Boolean {
+            if (android.os.Build.VERSION.SDK_INT >= 33) {
+                return app.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) ==
+                        PackageManager.PERMISSION_GRANTED
+            } else {
+                return true;
+            }
+        }
 
         /**
          * Check if the application has permission to start a foreground service
@@ -181,7 +185,7 @@ class PermissionCheckActivity : AppCompatActivity() {
          */
         private fun hasForegroundPerm(app: Activity): Boolean = (
                 app.checkSelfPermission(android.Manifest.permission.FOREGROUND_SERVICE) ==
-                        android.content.pm.PackageManager.PERMISSION_GRANTED
+                        PackageManager.PERMISSION_GRANTED
                 )
 
         /**
