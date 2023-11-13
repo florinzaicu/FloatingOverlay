@@ -18,7 +18,32 @@ jobs:
     needs:
       build_debug_apk
     steps:
-      - name: Test
-        run: echo "$artifact_name"!
+      # Check out project and download compiled artifact
+      - name: Checkout project
+        uses: actions/checkout@v3
+
+      - name: Download compiled APK artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.build_debug_apk.outputs.apk_name }}
+
+      - name: Create new release (RC)
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: CHANGELOG.md
+          draft: true
+          prerelease: false
         env:
-          artifact_name: ${{ needs.build_debug_apk.outputs.apk_name }}
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Upload binary to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ needs.build_debug_apk.outputs.apk_name }}
+          asset_name: ${{ needs.build_debug_apk.outputs.apk_name }}
+          asset_content_type: application/apk
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
