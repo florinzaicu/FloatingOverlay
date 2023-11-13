@@ -1,5 +1,3 @@
-**Major Version: v0**
-
 Change Log:
 * Add basic layout for main activity
 * Create activity to check for and request permissions needed by app to function
