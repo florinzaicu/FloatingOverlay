@@ -2,6 +2,9 @@ name: Build and Release RC Signed APK
 run-name: Build and Release RC Signed APK
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - develop
 jobs:
   # Build debug (RC) APK
   build_debug_apk:
@@ -14,4 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test
-        run: echo "works"!
+        run: echo "$artifact_name"!
+        env:
+          artifact_name: ${{ needs.jobs.build_debug_apk.outputs.apk_name }}

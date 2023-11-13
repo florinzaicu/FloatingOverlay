@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: Type of APK build (debug/release)
+    outputs:
+      apk_name:
+        description: "Path of compiled signed APK artifact"
+        value: ${{ jobs.build_apk.result.steps.pub_artifact.outputs.name }}
 
 env:
   # Version of compiled APK (extracted post compilation from meta file)
@@ -76,6 +80,7 @@ jobs:
 
       # Publish the artifact
       - name: Publish compiled APK (app${{ env.APK_VERSION }}.apk)
+        id: pub_artifact
         uses: actions/upload-artifact@v3
         with:
           name: app${{ env.APK_VERSION }}.apk
