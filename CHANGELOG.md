@@ -1,10 +1,10 @@
-# Change Log #
+**Change Log**
 * Fixed back button press on permission check activity no closing app
 * Resolved deprecation warning and other compilation warnings
 * Refactored start activity for result to new contract (handler) API
 
 
-# Previous Changes for Major Version #
+**Previous Changes for Major Version**
 
 *V0.3-RC:*
 * Fixed notification permission check for Android 33 and below

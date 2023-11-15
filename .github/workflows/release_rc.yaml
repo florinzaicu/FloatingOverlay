@@ -31,8 +31,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ needs.build_debug_apk.outputs.app_major_version }}
-          release_name: Release ${{ needs.build_debug_apk.outputs.apk_name }}
+          tag_name: ${{ needs.build_debug_apk.outputs.app_version }}
+          release_name: Release ${{ needs.build_debug_apk.outputs.apk_name }} (${{ needs.build_debug_apk.outputs.app_major_version }})
           body_path: CHANGELOG.md
           draft: false
           prerelease: true
