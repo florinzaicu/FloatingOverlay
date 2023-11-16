@@ -212,6 +212,5 @@ class PermissionCheckActivity : AppCompatActivity() {
          * @return Boolean: True if permission granted, false otherwise
          */
         private fun hasDrawOverlayPerm(app: Activity): Boolean = Settings.canDrawOverlays(app)
-
     }
 }

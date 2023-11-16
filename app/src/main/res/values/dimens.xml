@@ -7,4 +7,6 @@
     <dimen name="material_item_spacing_double">32dp</dimen>
     <dimen name="material_item_spacing">16dp</dimen>
     <dimen name="material_item_spacing_small">8dp</dimen>
+
+    <dimen name="float_overlay_height">30dp</dimen>
 </resources>

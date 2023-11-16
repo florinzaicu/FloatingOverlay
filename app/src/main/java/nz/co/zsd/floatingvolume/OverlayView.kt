@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,6 +14,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.getSystemService
+import androidx.core.view.GestureDetectorCompat
 
 
 /**
@@ -51,6 +53,44 @@ class OverlayView(context: Context) : View(context) {
         inflater.inflate(R.layout.overlay_layout, overlay)
         windowManager.addView(overlay, layoutParams)
 
+        // Initiate and bind a gesture listener to the overlay
+        val floatingOverlayGestListener = object : GestureDetector.SimpleOnGestureListener() {
+            /**
+             * Override the on down event and return true to consume it (make sure listener is
+             * used for other gestures)
+             */
+            override fun onDown(e: MotionEvent): Boolean {
+                return true
+            }
+
+            /**
+             * On single tap confirmed, trigger the volume up command
+             */
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                volumeUp()
+                return true
+            }
+
+            /**
+             * On double tap confirmed, trigger the volume down command
+             */
+            override fun onDoubleTap (e: MotionEvent): Boolean {
+                volumeDown()
+                return true
+            }
+
+            /**
+             * On long press, expand the overlay
+             */
+            override fun onLongPress(e: MotionEvent) {
+                expandControls()
+            }
+        }
+
+        val gestureDetector = GestureDetector(context, floatingOverlayGestListener)
+        overlay.findViewById<View>(R.id.gestureIcon).setOnTouchListener {_, motionEvent ->
+            gestureDetector.onTouchEvent(motionEvent)
+        }
 
         // Bind drag action to the overlay drag handle (allow user to move overlay)
         overlay.findViewById<View>(R.id.dragIcon)
@@ -73,12 +113,15 @@ class OverlayView(context: Context) : View(context) {
                             touchX = eventX
                             touchY = eventY
 
+                            // Clear the collapse timer when dragging
+                            clearCollapseTimer()
                             return true
                         }
 
                         MotionEvent.ACTION_UP -> {
-                            if (collapsed == false ) {
-                                // TODO: init timer
+                            // When dragging released initiate the collapse timer if not collapsed
+                            if (!collapsed) {
+                                initCollapseTimer()
                             }
                             return true
                         }
@@ -100,22 +143,25 @@ class OverlayView(context: Context) : View(context) {
         // Bind click actions to the overlay buttons
         overlay.findViewById<ImageView>(R.id.volumeUp).setOnClickListener {
             Log.d(javaClass.simpleName, "Volume up button pressed")
-            VolumeUp()
+            volumeUp()
         }
         overlay.findViewById<ImageView>(R.id.volumeDown).setOnClickListener {
             Log.d(javaClass.simpleName, "Volume down button pressed")
-            VolumeDown()
+            volumeDown()
         }
         overlay.findViewById<ImageView>(R.id.exitOverlay).setOnClickListener {
             Log.d(javaClass.simpleName, "Exit button pressed")
-            ExitOverlay()
+            exitOverlay()
         }
+
+        // Collapse the UI (only show expand)
+        collapseControls();
     }
 
     /**
      * Increase the volume of the device (current most relevant stream)
      */
-    private fun VolumeUp () {
+    private fun volumeUp () {
         val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
         Log.i(javaClass.simpleName, "Current volume is $currentVol. Increase called")
@@ -125,7 +171,7 @@ class OverlayView(context: Context) : View(context) {
     /**
      * Decrease the volume of the device (current most relevant stream)
      */
-    private fun VolumeDown () {
+    private fun volumeDown () {
         val manager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val currentVol = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
         Log.i(javaClass.simpleName, "Current volume is $currentVol. Decrease called")
@@ -135,7 +181,7 @@ class OverlayView(context: Context) : View(context) {
     /**
      * Exit the overlay by stopping the overlay service
      */
-    private fun ExitOverlay() {
+    private fun exitOverlay() {
         Log.i(javaClass.simpleName, "Exit button pressed. Stopping overlay.")
         context.stopService(Intent(context, OverlayService::class.java))
     }
@@ -145,5 +191,65 @@ class OverlayView(context: Context) : View(context) {
      */
     fun destroy() {
         windowManager.removeView(overlay)
+    }
+
+    /* ----- Collapse overlay methods ----- */
+
+    /**
+     * Collapse the overlay controls by hiding all icons (expect the drag icon), clear the collapse
+     * timer, and set the collapsed flag to true
+     */
+    private fun collapseControls() {
+        collapsed = true
+        overlay.findViewById<ImageView>(R.id.dragIcon).visibility = GONE
+        overlay.findViewById<ImageView>(R.id.volumeDown).visibility = GONE
+        overlay.findViewById<ImageView>(R.id.volumeUp).visibility = GONE
+        overlay.findViewById<ImageView>(R.id.exitOverlay).visibility = GONE
+
+        clearCollapseTimer()
+    }
+
+    /**
+     * Expand the overlay controls by showing all hidden icons, triggering the collapse timer,
+     * and setting the collapsed status to false
+     */
+    private fun expandControls() {
+        collapsed = false
+        overlay.findViewById<ImageView>(R.id.dragIcon).visibility = VISIBLE
+        overlay.findViewById<ImageView>(R.id.volumeDown).visibility = VISIBLE
+        overlay.findViewById<ImageView>(R.id.volumeUp).visibility = VISIBLE
+        overlay.findViewById<ImageView>(R.id.exitOverlay).visibility = VISIBLE
+
+        initCollapseTimer()
+    }
+
+    private fun initCollapseTimer() {
+        timer?.cancel()
+        timer = object : CountDownTimer(5000, 5000) {
+            override fun onTick(millisUntilFinished: Long) {
+                // Do nothing (no tick)
+            }
+
+            override fun onFinish() {
+                Log.d(LOG_TAG, "Timer finished, collapsing controls")
+                timer = null
+                collapseControls()
+            }
+        }
+
+        timer?.start();
+        Log.d(LOG_TAG, "Started timer to trigger after 5 seconds");
+    }
+
+    private fun clearCollapseTimer() {
+        timer?.cancel();
+        timer = null;
+    }
+
+    companion object {
+        /**
+         * Tag to use when logging information to logcat
+         */
+        private val LOG_TAG: String = OverlayView::class.simpleName ?: "OverlayView"
     }
 }

@@ -69,7 +69,7 @@ class OverlayService : Service() {
             val notification = NotificationCompat.Builder(this, "1")
                 .setContentTitle("Displaying Overlay")
                 .setContentText("Floating volume controls are currently visible")
-                .setSmallIcon(R.drawable.ic_launcher_monochrome)
+                .setSmallIcon(R.drawable.ic_logo_circ_mono)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
                 .addAction(R.drawable.ic_close, "Close", pendingExitIntent)
 

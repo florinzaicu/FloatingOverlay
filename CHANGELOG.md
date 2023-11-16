@@ -1,10 +1,16 @@
 **Change Log**
-* Fixed back button press on permission check activity no closing app
-* Resolved deprecation warning and other compilation warnings
-* Refactored start activity for result to new contract (handler) API
+* Add circular version of app logo for notification (fix scaling)
+* Add collapsing functionality to overlay
+* Add gestures to overlay to allow changing volume and expand overlay
+* Increased size of overlay buttons
+* General code improvements and clean-up of logging tags
 
 
 **Previous Changes for Major Version**
+*V0.4-RC:*
+* Fixed back button press on permission check activity no closing app
+* Resolved deprecation warning and other compilation warnings
+* Refactored start activity for result to new contract (handler) API
 
 *V0.3-RC:*
 * Fixed notification permission check for Android 33 and below

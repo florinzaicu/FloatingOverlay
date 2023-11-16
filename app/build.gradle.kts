@@ -11,8 +11,8 @@ android {
         applicationId = "nz.co.zsd.floatingvolume"
         minSdk = 28
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.4"
+        versionCode = 5
+        versionName = "0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
