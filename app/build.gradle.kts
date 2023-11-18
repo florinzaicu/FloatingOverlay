@@ -27,7 +27,7 @@ android {
                 storePassword = properties.getOrDefault("store_pass", "") as String
                 keyPassword = properties.getOrDefault("key_pass", "") as String
             } else {
-                println("No keystore file path property. Generating unsigned debug APK")
+                println("No debug keystore file path property!")
             }
         }
         create("release") {
@@ -39,7 +39,7 @@ android {
                 storePassword = properties.getOrDefault("store_pass", "") as String
                 keyPassword = properties.getOrDefault("key_pass", "") as String
             } else {
-                println("No keystore file path property. Generating unsigned debug APK")
+                println("No release keystore file path property!")
             }
         }
     }
