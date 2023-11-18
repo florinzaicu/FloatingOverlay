@@ -1,52 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_docked_overlay"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="@dimen/material_item_spacing_small"
-    android:background="@color/design_default_color_primary"
     tools:context=".OverlayView"
+    android:background="@color/md_theme_dark_primaryContainer"
     android:animateLayoutChanges="true">
-
     <ImageView
         android:id="@+id/gestureIcon"
-        android:layout_width="@dimen/float_overlay_height"
-        android:layout_height="@dimen/float_overlay_height"
-        android:layout_margin="@dimen/material_item_spacing_small"
-        android:src="@drawable/ic_drag_indicator" />
+        android:layout_width="@dimen/float_overlay_btn_base_size"
+        android:layout_height="@dimen/float_overlay_btn_base_size"
+        android:padding="@dimen/material_item_spacing_xsmall"
+        android:src="@drawable/ic_drag_indicator"
+        app:tint="@color/md_theme_dark_onPrimaryContainer" />
 
     <ImageView
         android:id="@+id/dragIcon"
-        android:layout_width="@dimen/float_overlay_height"
-        android:layout_height="@dimen/float_overlay_height"
-        android:layout_margin="@dimen/material_item_spacing_small"
-        android:src="@drawable/ic_drag_pan" />
+        android:layout_width="@dimen/float_overlay_btn_base_size"
+        android:layout_height="@dimen/float_overlay_btn_base_size"
+        android:padding="@dimen/material_item_spacing_xsmall"
+        android:src="@drawable/ic_drag_pan"
+        app:tint="@color/md_theme_dark_onPrimaryContainer" />
 
     <ImageView
         android:id="@+id/volumeDown"
-        android:layout_width="@dimen/float_overlay_height"
-        android:layout_height="@dimen/float_overlay_height"
-        android:layout_margin="@dimen/material_item_spacing_small"
+        android:layout_width="@dimen/float_overlay_btn_base_size"
+        android:layout_height="@dimen/float_overlay_btn_base_size"
+        android:padding="@dimen/material_item_spacing_xsmall"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:src="@drawable/ic_volume_down" />
+        android:src="@drawable/ic_volume_down"
+        app:tint="@color/md_theme_dark_onPrimaryContainer" />
 
     <ImageView
         android:id="@+id/volumeUp"
-        android:layout_width="@dimen/float_overlay_height"
-        android:layout_height="@dimen/float_overlay_height"
-        android:layout_margin="@dimen/material_item_spacing_small"
+        android:layout_width="@dimen/float_overlay_btn_base_size"
+        android:layout_height="@dimen/float_overlay_btn_base_size"
+        android:padding="@dimen/material_item_spacing_xsmall"
         android:clickable="true"
-        android:src="@drawable/ic_volume_up" />
+        android:foreground="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_volume_up"
+        app:tint="@color/md_theme_dark_onPrimaryContainer" />
 
     <ImageView
         android:id="@+id/exitOverlay"
-        android:layout_width="@dimen/float_overlay_height"
-        android:layout_height="@dimen/float_overlay_height"
-        android:layout_margin="@dimen/material_item_spacing_small"
+        android:layout_width="@dimen/float_overlay_btn_base_size"
+        android:layout_height="@dimen/float_overlay_btn_base_size"
+        android:padding="@dimen/material_item_spacing_xsmall"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:src="@drawable/ic_close" />
+        android:src="@drawable/ic_close"
+        app:tint="@color/md_theme_dark_onPrimaryContainer" />
 </LinearLayout>

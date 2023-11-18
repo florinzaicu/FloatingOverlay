@@ -2,19 +2,26 @@ package nz.co.zsd.floatingvolume
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.media.AudioManager
+import android.os.Build
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.content.getSystemService
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.size
+import com.google.android.material.color.DynamicColors
+import kotlin.math.log
 
 
 /**
@@ -37,6 +44,8 @@ class OverlayView(context: Context) : View(context) {
         android.graphics.PixelFormat.TRANSLUCENT
     ).apply {
         gravity = Gravity.LEFT or Gravity.TOP
+        x = 0
+        y = 0
     }
 
     // Flag that indicates if the overlay is collapsed (true) or not (false)
@@ -85,6 +94,28 @@ class OverlayView(context: Context) : View(context) {
             override fun onLongPress(e: MotionEvent) {
                 expandControls()
             }
+
+            /**
+             * On fling gesture move the overlay to an edge of the screen.
+             * @param e1 The first down motion event that initiated the fling
+             * @param e2 The second motion event captured on release of the fling
+             * @param velocityX The velocity of this fling measured in px/s along the x axis
+             * @param velocityY The velocity of this fling measured in px/s along the y axis
+             */
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                // If the overlay is expanded, do not perform fling detection
+                if (!collapsed)
+                    return true;
+
+                var flingDirection: Int = if (velocityX < 0) FLING_LEFT else FLING_RIGHT
+                flingOverlay(flingDirection)
+                return true
+            }
         }
 
         val gestureDetector = GestureDetector(context, floatingOverlayGestListener)
@@ -112,6 +143,19 @@ class OverlayView(context: Context) : View(context) {
                             y = layoutParams.y
                             touchX = eventX
                             touchY = eventY
+
+                            // Snap the overlay to the edge of the screen if its x and y position
+                            // are over the bounds of the usable area of teh screen
+                            val bounds: Rect = getMaxSize()
+                            if (x > bounds.right) {
+                                x = bounds.right
+                            }
+                            if (y > bounds.bottom) {
+                                y = bounds.bottom
+                            }
+                            layoutParams.x = x
+                            layoutParams.y = y
+                            windowManager.updateViewLayout(overlay, layoutParams)
 
                             // Clear the collapse timer when dragging
                             clearCollapseTimer()
@@ -156,6 +200,25 @@ class OverlayView(context: Context) : View(context) {
 
         // Collapse the UI (only show expand)
         collapseControls();
+    }
+
+    /**
+     * Fling the overlay to a specified location on screen (snap to max bounds of usable area)
+     * @param direction Direction to fling the screen (see FLING constants)
+     */
+    private fun flingOverlay(direction: Int) {
+        // Get the size of the screen and decide how to fling it on the x axis
+        val bounds: Rect = getMaxSize()
+        var x = 0;
+        if (direction and FLING_LEFT == FLING_LEFT) {
+            x = 0
+        } else if (direction and FLING_RIGHT == FLING_RIGHT) {
+            x = bounds.right
+        }
+
+        // Move the overlay to the specified fling position
+        layoutParams.x = x
+        windowManager.updateViewLayout(overlay, layoutParams)
     }
 
     /**
@@ -223,6 +286,9 @@ class OverlayView(context: Context) : View(context) {
         initCollapseTimer()
     }
 
+    /**
+     * Initiate the collapse timer to collapse the overlay after 5 seconds
+     */
     private fun initCollapseTimer() {
         timer?.cancel()
         timer = object : CountDownTimer(5000, 5000) {
@@ -241,15 +307,64 @@ class OverlayView(context: Context) : View(context) {
         Log.d(LOG_TAG, "Started timer to trigger after 5 seconds");
     }
 
+    /**
+     * Cancel and stop the collapse timer
+     */
     private fun clearCollapseTimer() {
         timer?.cancel();
         timer = null;
     }
+
+    /**
+     * Get the maximum size of the usable area of the screen (canvas)
+     * @return rect object with the max bounds of the screen where left and bottom represent
+     *  width and height and left and top are always 0
+     */
+    private fun getMaxSize(): Rect {
+        // Get the size of the screen (canvas) to move the overlay
+        var rect = Rect(0, 0, 0, 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            rect.right = windowManager.maximumWindowMetrics.bounds.width()
+            rect.bottom = windowManager.maximumWindowMetrics.bounds.height()
+        } else {
+            rect.right = windowManager.defaultDisplay.width
+            rect.bottom = windowManager.defaultDisplay.height
+        }
+
+        // Adjust the screen size with the view size to get the max bounds to move the overlay
+        val overlayHeight = overlay.findViewById<View>(R.id.activity_docked_overlay).measuredHeightAndState
+        val overlayWidth = overlay.findViewById<View>(R.id.activity_docked_overlay).measuredWidthAndState
+        rect.right -= overlayWidth
+        rect.bottom -= overlayHeight
+        return rect
+    }
+
 
     companion object {
         /**
          * Tag to use when logging information to logcat
          */
         private val LOG_TAG: String = OverlayView::class.simpleName ?: "OverlayView"
+
+        /**
+         * Constants the specify the fling location of the overlay.
+         * OR to get a combination of fling directions. Binary representation of positions:
+         *  0) 0000 = MIDDLE CENTER
+         *  1) 0001 = MIDDLE LEFT
+         *  2) 0010 = MIDDLE RIGHT
+         *  3) 0011 = MIDDLE CENTER
+         *  4) UNDEFINED
+         *  5) 0101 = TOP LEFT
+         *  6) 0110 = TOP RIGHT
+         *  7) 0111 = TOP CENTER
+         *  8) UNDEFINED
+         *  9) 0001 = BOTTOM LEFT
+         * 10) 1010 = BOTTOM RIGHT
+         * 11) 1011 = BOTTOM CENTER
+         */
+        public const val FLING_LEFT = 1;
+        public const val FLING_RIGHT = 2;
+        public const val FLING_TOP = 4;
+        public const val FLING_BOTTOM = 8;
     }
 }

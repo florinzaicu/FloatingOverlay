@@ -1,12 +1,17 @@
 **Change Log**
+* Update app to use Material 3 dynamic colors
+* Add flick gesture support to overlay to move quickly to edges (issue #5)
+* Fix move coordinates on rotate screen or fold (issue #6)
+
+
+**Previous Changes for Major Version**
+*V0.5-RC:*
 * Add circular version of app logo for notification (fix scaling)
 * Add collapsing functionality to overlay
 * Add gestures to overlay to allow changing volume and expand overlay
 * Increased size of overlay buttons
 * General code improvements and clean-up of logging tags
 
-
-**Previous Changes for Major Version**
 *V0.4-RC:*
 * Fixed back button press on permission check activity no closing app
 * Resolved deprecation warning and other compilation warnings

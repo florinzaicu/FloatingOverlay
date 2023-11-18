@@ -1,5 +1,6 @@
 package nz.co.zsd.floatingvolume
 
+import android.app.ActionBar
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.color.DynamicColors
 
 class MainActivity : AppCompatActivity() {
     /**
