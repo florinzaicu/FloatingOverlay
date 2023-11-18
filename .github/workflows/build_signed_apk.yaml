@@ -65,7 +65,7 @@ jobs:
       # Build APK
       - name: Build debug APK
         if: inputs.compile_type == 'debug'
-        run: ./gradlew assembleDebug -Pdebub_keystore=../${{ env.KEY_PATH }} -Pkey_alias=app.floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
+        run: ./gradlew assembleDebug -Pdebug_keystore=../${{ env.KEY_PATH }} -Pkey_alias=floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
         env:
           STORE_PASS: ${{ secrets.DEBUG_KEYSTORE_PASS }}
           KEY_PASS: ${{ secrets.DEBUG_KEYSTORE_KEY_PASS }}
