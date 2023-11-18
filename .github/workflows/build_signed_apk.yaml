@@ -39,7 +39,7 @@ jobs:
     steps:
       # Check out project and install dependencies
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install JDK 18
         uses: actions/setup-java@v3
         with:
@@ -52,7 +52,8 @@ jobs:
       # Inject the keystore for signing the APK
       - name: Injecting debug keystore file
         if: inputs.compile_type == 'debug'
-        run: echo $DEBUG_KEYSTORE | base64 --decode > "${{ env.KEY_PATH}}"
+        run:
+          echo $DEBUG_KEYSTORE | base64 --decode > ${{ env.KEY_PATH}}
         env:
           DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
 
@@ -65,7 +66,8 @@ jobs:
       # Build APK
       - name: Build debug APK
         if: inputs.compile_type == 'debug'
-        run: ./gradlew assembleDebug -Pdebug_keystore=../${{ env.KEY_PATH }} -Pkey_alias=floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
+        run: |
+          ./gradlew assembleDebug -Pdebug_keystore=../${{ env.KEY_PATH }} -Pkey_alias=floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
         env:
           STORE_PASS: ${{ secrets.DEBUG_KEYSTORE_PASS }}
           KEY_PASS: ${{ secrets.DEBUG_KEYSTORE_KEY_PASS }}

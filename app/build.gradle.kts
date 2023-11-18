@@ -11,8 +11,8 @@ android {
         applicationId = "nz.co.zsd.floatingvolume"
         minSdk = 28
         targetSdk = 34
-        versionCode = 6
-        versionName = "0.6"
+        versionCode = 7
+        versionName = "0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,7 +23,7 @@ android {
             if (properties.containsKey("debug_keystore")) {
                 println("Signing debug APK")
                 storeFile = file(properties["debug_keystore"] as String)
-                keyAlias = properties.getOrDefault("key_alias", "app.floatingoverlay") as String
+                keyAlias = properties.getOrDefault("key_alias", "floatingoverlay") as String
                 storePassword = properties.getOrDefault("store_pass", "") as String
                 keyPassword = properties.getOrDefault("key_pass", "") as String
             } else {
@@ -35,7 +35,7 @@ android {
             if (properties.containsKey("release_keystore")) {
                 println("Signing release APK")
                 storeFile = file(properties["release_keystore"] as String)
-                keyAlias = properties.getOrDefault("key_alias", "app.floatingoverlay") as String
+                keyAlias = properties.getOrDefault("key_alias", "floatingoverlay") as String
                 storePassword = properties.getOrDefault("store_pass", "") as String
                 keyPassword = properties.getOrDefault("key_pass", "") as String
             } else {

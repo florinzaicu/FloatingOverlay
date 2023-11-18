@@ -1,10 +1,15 @@
 **Change Log**
+* Add animation to flick of overlay
+* Fixed deprecation warning on build
+* Published signed version of RC APK
+
+
+**Previous Changes for Major Version**
+*V0.6-RC:*
 * Update app to use Material 3 dynamic colors
 * Add flick gesture support to overlay to move quickly to edges (issue #5)
 * Fix move coordinates on rotate screen or fold (issue #6)
 
-
-**Previous Changes for Major Version**
 *V0.5-RC:*
 * Add circular version of app logo for notification (fix scaling)
 * Add collapsing functionality to overlay

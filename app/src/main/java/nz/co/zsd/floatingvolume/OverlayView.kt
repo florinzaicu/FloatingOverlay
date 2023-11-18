@@ -1,5 +1,8 @@
 package nz.co.zsd.floatingvolume
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
@@ -17,6 +20,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.animation.doOnEnd
 import androidx.core.content.getSystemService
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.size
@@ -216,9 +220,14 @@ class OverlayView(context: Context) : View(context) {
             x = bounds.right
         }
 
-        // Move the overlay to the specified fling position
-        layoutParams.x = x
-        windowManager.updateViewLayout(overlay, layoutParams)
+        // Animate flinging the overlay to the new x position
+        ValueAnimator.ofInt(layoutParams.x, x).apply {
+            duration = 300
+            start()
+        }.addUpdateListener {animation ->
+            layoutParams.x = animation.animatedValue as Int
+            windowManager.updateViewLayout(overlay, layoutParams)
+        }
     }
 
     /**
@@ -287,24 +296,22 @@ class OverlayView(context: Context) : View(context) {
     }
 
     /**
-     * Initiate the collapse timer to collapse the overlay after 5 seconds
+     * Initiate the collapse timer to collapse the overlay after 3 seconds
      */
     private fun initCollapseTimer() {
         timer?.cancel()
-        timer = object : CountDownTimer(5000, 5000) {
+        timer = object : CountDownTimer(3000, 3000) {
             override fun onTick(millisUntilFinished: Long) {
                 // Do nothing (no tick)
             }
 
             override fun onFinish() {
-                Log.d(LOG_TAG, "Timer finished, collapsing controls")
                 timer = null
                 collapseControls()
             }
         }
 
         timer?.start();
-        Log.d(LOG_TAG, "Started timer to trigger after 5 seconds");
     }
 
     /**
@@ -327,7 +334,10 @@ class OverlayView(context: Context) : View(context) {
             rect.right = windowManager.maximumWindowMetrics.bounds.width()
             rect.bottom = windowManager.maximumWindowMetrics.bounds.height()
         } else {
+            // NOTE: this was only deprecated in API 30. Anything lower can use this call
+            @Suppress("DEPRECATION")
             rect.right = windowManager.defaultDisplay.width
+            @Suppress("DEPRECATION")
             rect.bottom = windowManager.defaultDisplay.height
         }
 

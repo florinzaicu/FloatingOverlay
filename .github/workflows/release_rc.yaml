@@ -11,6 +11,7 @@ jobs:
     uses: ./.github/workflows/build_signed_apk.yaml
     with:
       compile_type: debug
+    secrets: inherit
 
   # Release published RC APK
   release_rc:
