@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
 android:orientation="vertical"
 android:layout_width="match_parent"
-android:layout_height="match_parent"
+android:layout_height="wrap_content"
 android:padding="@dimen/activity_horizontal_margin">
     <TextView
         android:layout_width="match_parent"
@@ -22,11 +25,126 @@ android:padding="@dimen/activity_horizontal_margin">
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/material_item_spacing"
         android:layout_marginBottom="@dimen/material_item_spacing" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:onClick="startOverlayService"
-        android:text="Show Overlay" />
+        android:text="@string/main_show_overlay_btn" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_item_spacing"
+        android:layout_marginBottom="@dimen/material_item_spacing" />
+
+    <TextView
+        style="@style/TextAppearance.Material3.LabelLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/overlay_ui_scale"
+        android:labelFor="@id/overlayUIScale" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_item_spacing_small"
+        android:layout_marginBottom="@dimen/material_item_spacing"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/overlayUIScaleValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/material_item_spacing_small"
+            android:text="@string/overlay_ui_scale_placeholder"
+            android:labelFor="@id/overlayUIScale" />
+
+        <SeekBar
+            android:id="@+id/overlayUIScale"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:min="0"
+            android:max="7"
+            android:progress="2"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TextAppearance.Material3.LabelLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/overlay_timer_collapse"
+        android:labelFor="@id/overlayCollapseTimer" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_item_spacing"
+        android:layout_marginBottom="@dimen/material_item_spacing_small"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/overlayCollapseTimerValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/material_item_spacing"
+            android:text="@string/overlay_timer_collapse_placeholder"
+            android:labelFor="@id/overlayCollapseTimer" />
+
+        <SeekBar
+            android:id="@+id/overlayCollapseTimer"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:min="1"
+            android:max="8"
+            android:progress="1"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TextAppearance.Material3.LabelLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/overlay_transparency"
+        android:labelFor="@id/overlayTransparency" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_item_spacing_small"
+        android:layout_marginBottom="@dimen/material_item_spacing_double"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/overlayTransparencyValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/material_item_spacing"
+            android:text="@string/overlay_transparency_placeholder"
+            android:labelFor="@id/overlayTransparency" />
+
+        <SeekBar
+            android:id="@+id/overlayTransparency"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:min="0"
+            android:max="5"
+            android:progress="5"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/updateSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="saveUISettings"
+        android:text="@string/overlay_save_settings_btn" />
 </LinearLayout>
+</ScrollView>

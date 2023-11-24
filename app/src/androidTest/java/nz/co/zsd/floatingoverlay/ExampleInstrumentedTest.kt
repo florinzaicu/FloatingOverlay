@@ -1,4 +1,4 @@
-package nz.co.zsd.floatingvolume
+package nz.co.zsd.floatingoverlay
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

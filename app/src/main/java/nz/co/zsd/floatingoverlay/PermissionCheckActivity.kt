@@ -1,4 +1,4 @@
-package nz.co.zsd.floatingvolume
+package nz.co.zsd.floatingoverlay
 
 import android.app.Activity
 import android.content.Intent

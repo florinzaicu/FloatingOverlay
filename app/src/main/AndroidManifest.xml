@@ -39,7 +39,7 @@
         <!-- Register the floating overlay service -->
         <service
             android:name=".OverlayService"
-            android:foregroundServiceType="specialUse" >
+            android:foregroundServiceType="specialUse">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Display overlay on screen with buttons to execute configured actions" />

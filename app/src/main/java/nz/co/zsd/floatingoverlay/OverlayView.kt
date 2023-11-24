@@ -1,31 +1,25 @@
-package nz.co.zsd.floatingvolume
+package nz.co.zsd.floatingoverlay
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Rect
 import android.media.AudioManager
 import android.os.Build
 import android.os.CountDownTimer
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.core.animation.doOnEnd
 import androidx.core.content.getSystemService
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.size
-import com.google.android.material.color.DynamicColors
-import kotlin.math.log
+import androidx.core.view.updateLayoutParams
+import kotlin.math.roundToInt
 
 
 /**
@@ -57,13 +51,32 @@ class OverlayView(context: Context) : View(context) {
     // Countdown timer instance that handles auto-collapse functionality
     private var timer: CountDownTimer? = null;
 
+    private fun scaleOverlayButton(id: Int, scale: Float ) {
+        overlay.findViewById<View>(id).updateLayoutParams {
+            width = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+            height = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+        }
+    }
+
+    fun refreshUI() {
+        scaleOverlayButton(R.id.gestureIcon, PreferenceStorage.getUIScale(context))
+        scaleOverlayButton(R.id.dragIcon, PreferenceStorage.getUIScale(context))
+        scaleOverlayButton(R.id.volumeDown, PreferenceStorage.getUIScale(context))
+        scaleOverlayButton(R.id.volumeUp, PreferenceStorage.getUIScale(context))
+        scaleOverlayButton(R.id.exitOverlay, PreferenceStorage.getUIScale(context))
+        overlay.findViewById<View>(R.id.floating_overlay_container).alpha = PreferenceStorage.getUITransparency(context)
+    }
+
     /**
      * Initiate the overlay and display it on the screen
      */
     init {
-        // Inflate the layout of the overlay and add it to the overlay frame to display
+        // Inflate the layout of the overlay
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.overlay_layout, overlay)
+
+        // Apply properties to the overlay and add to windows manager
+        refreshUI()
         windowManager.addView(overlay, layoutParams)
 
         // Initiate and bind a gesture listener to the overlay
@@ -299,8 +312,9 @@ class OverlayView(context: Context) : View(context) {
      * Initiate the collapse timer to collapse the overlay after 3 seconds
      */
     private fun initCollapseTimer() {
+        val collapseInterval = PreferenceStorage.getUICollapseTimer(context) * 1000L
         timer?.cancel()
-        timer = object : CountDownTimer(3000, 3000) {
+        timer = object : CountDownTimer(collapseInterval, collapseInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 // Do nothing (no tick)
             }
@@ -342,8 +356,8 @@ class OverlayView(context: Context) : View(context) {
         }
 
         // Adjust the screen size with the view size to get the max bounds to move the overlay
-        val overlayHeight = overlay.findViewById<View>(R.id.activity_docked_overlay).measuredHeightAndState
-        val overlayWidth = overlay.findViewById<View>(R.id.activity_docked_overlay).measuredWidthAndState
+        val overlayHeight = overlay.findViewById<View>(R.id.floating_overlay_container).measuredHeightAndState
+        val overlayWidth = overlay.findViewById<View>(R.id.floating_overlay_container).measuredWidthAndState
         rect.right -= overlayWidth
         rect.bottom -= overlayHeight
         return rect

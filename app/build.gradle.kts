@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "nz.co.zsd.floatingvolume"
+    namespace = "nz.co.zsd.floatingoverlay"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "nz.co.zsd.floatingvolume"
+        applicationId = "nz.co.zsd.floatingoverlay"
         minSdk = 28
         targetSdk = 34
-        versionCode = 7
-        versionName = "0.7"
+        versionCode = 8
+        versionName = "0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

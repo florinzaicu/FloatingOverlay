@@ -1,7 +1,5 @@
-package nz.co.zsd.floatingvolume
+package nz.co.zsd.floatingoverlay
 
-import android.app.ActivityManager
-import android.app.Application
 import android.app.ForegroundServiceStartNotAllowedException
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,21 +15,33 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class OverlayService : Service() {
     private var overlay: OverlayView? = null
 
     /**
-     * Broadcast receiver that will trigger a service state refresh.
+     * Broadcast receiver that will trigger the service to stop.
      */
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.d(javaClass.simpleName, "Broadcast receiver received a message with action ${intent.action}")
-            if (intent.action == BROADCAST_INTENT_ACTION_EXIT) {
-                Log.i(javaClass.simpleName, "Stopping service")
-                context.stopService(Intent(context, OverlayService::class.java))
+            when (intent.action) {
+                // If the action is to exit the service, stop the service
+                OVERLAY_SERVICE_ACTION_EXIT -> {
+                    Log.i(javaClass.simpleName, "Received exit operation, stopping service")
+                    context.stopService(Intent(context, OverlayService::class.java))
+                }
+
+                // If the action is to refresh the overlay, refresh the overlay
+                OVERLAY_SERVICE_ACTION_REFRESH -> {
+                    Log.i(javaClass.simpleName, "Received refresh operation, refreshing overlay")
+                    overlay?.refreshUI()
+                }
+
+                // Otherwise log a warning and do nothing
+                else -> {
+                    Log.w(javaClass.simpleName, "Received unknown operation, ignoring")
+                }
             }
         }
     }
@@ -41,9 +51,13 @@ class OverlayService : Service() {
      */
     override fun onCreate() {
         super.onCreate()
-
         Log.d(javaClass.simpleName, "On create called, registering broadcast receiver")
-        ContextCompat.registerReceiver(this, messageReceiver, IntentFilter(BROADCAST_INTENT_ACTION_EXIT), ContextCompat.RECEIVER_EXPORTED)
+
+        // Register the broadcast receiver to listen for exit and refresh intents
+        ContextCompat.registerReceiver(this, messageReceiver, IntentFilter(
+            OVERLAY_SERVICE_ACTION_EXIT), ContextCompat.RECEIVER_EXPORTED)
+        ContextCompat.registerReceiver(this, messageReceiver, IntentFilter(
+            OVERLAY_SERVICE_ACTION_REFRESH), ContextCompat.RECEIVER_EXPORTED)
     }
 
     /**
@@ -62,7 +76,7 @@ class OverlayService : Service() {
             val pendingExitIntent = PendingIntent.getBroadcast(
                 this,
                 0,
-                Intent(BROADCAST_INTENT_ACTION_EXIT),
+                Intent(OVERLAY_SERVICE_ACTION_EXIT),
                 PendingIntent.FLAG_IMMUTABLE
             )
 
@@ -156,6 +170,15 @@ class OverlayService : Service() {
         /**
          * Broadcast intent action that tells the service to stop showing the overlay
          */
-        const val BROADCAST_INTENT_ACTION_EXIT = "nz.co.zsd.floatingvolume.SERVICE.EXIT"
+        const val OVERLAY_SERVICE_ACTION_EXIT       = "nz.co.zsd.floatingoverlay.SERVICE.EXIT"
+        const val OVERLAY_SERVICE_ACTION_REFRESH    = "nz.co.zsd.floatingoverlay.SERVICE.REFRESH"
+
+        /**
+         * Broadcast intent that tells the floating overlay service to perform an action. See
+         * following list of actions for list of supported operations.
+         */
+        const val OPERATION             = "Operation"
+        const val OPERATION_EXIT        = 0
+        const val OPERATION_REFRESH     = 1
     }
 }

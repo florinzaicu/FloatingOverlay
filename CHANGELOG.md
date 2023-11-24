@@ -1,10 +1,16 @@
 **Change Log**
+* Update name of activity package
+* Add preference storage and support for configuration attributes
+* Add UI elements that allow setting custom scale, collapse timeout and transparency of overlay
+* General UI improvements
+
+
+**Previous Changes for Major Version**
+*V0.7-RC:*
 * Add animation to flick of overlay
 * Fixed deprecation warning on build
 * Published signed version of RC APK
 
-
-**Previous Changes for Major Version**
 *V0.6-RC:*
 * Update app to use Material 3 dynamic colors
 * Add flick gesture support to overlay to move quickly to edges (issue #5)
