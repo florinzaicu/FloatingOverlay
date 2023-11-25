@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">Floating Overlay</string>
+
+    <!-- Main activity strings -->
+    <string name="main_instructions_heading">How to Use</string>
+    <string name="main_instructions_text">
+        This application displays a floating overlay with controls that allow changing the system
+        volume. The application uses a foreground task to show the overlay. The floating overlay and
+        service can be closed by pressing the exit button on the overlay itself (expanded view) or
+        by pressing the close button displayed on the persistent foreground service notification.
+        \n\n
+        The overlay can be expanded by long pressing on the gesture icon. A single press on the gesture
+        icon will increase the volume, while a double press will decrease it. The overlay can be
+        flicked over to a side of the screen by preforming a horizontal flick gesture on the drag icon.
+        \n\n
+        The overlay may also be manually moved on screen via the drag icon (expanded view).
+        \n\n
+        To show the overlay, press the show overlay button.
+    </string>
+    <string name="main_show_overlay_btn">Show Overlay</string>
+
+    <!-- Main activity setting UI string -->
+    <string name="overlay_ui_scale">Scale Overlay Size</string>
+    <string name="overlay_ui_scale_placeholder">1.0</string>
+    <string name="overlay_timer_collapse">Collapse Timer</string>
+    <string name="overlay_timer_collapse_placeholder">1</string>
+    <string name="overlay_transparency">Overlay Transparency</string>
+    <string name="overlay_transparency_placeholder">1.0</string>
+    <string name="overlay_save_settings_btn">Save Settings</string>
+
+    <!-- Permissions activity strings -->
+    <string name="perm_req_heading">Permission Required</string>
+    <string name="perm_req_message">
+        This app requires extra permissions to be able to run. If the permissions are not granted
+        the application will not work on your device.
+    </string>
+    <string name="perm_req_modify_btn">Grant Permission</string>
+
+    <string name="perm_req_notify">Display Persistent Notification</string>
+    <string name="perm_req_notify_msg">
+        The application shows a persistent notification while the overlay is visible.
+    </string>
+    <string name="perm_granted_notify_msg">
+        You have granted the notification permission! The application will use this permission
+        to shows a persistent notification while the overlay is visible.
+    </string>
+
+    <string name="perm_req_foreground">Foreground Service</string>
+    <string name="perm_req_foreground_msg">
+        The application uses a foreground service to display a floating overlay with controls.
+    </string>
+    <string name="perm_granted_foreground_msg">
+        You have granted the foreground service permission! The application uses a foreground
+        service to display a floating overlay with controls.
+    </string>
+
+    <string name="perm_req_overlay">Draw Over Other Apps</string>
+    <string name="perm_req_overlay_msg">
+        The application will draw an overlay with controls over other applications.
+    </string>
+    <string name="perm_granted_overlay_msg">
+        You have granted the draw over other apps permission! The application will draw an overlay
+        with controls over other applications.
+    </string>
+
+    <string name="perm_req_exit_msg">If you wish to close the application please press the back button.</string>
+</resources>
