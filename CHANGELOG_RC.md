@@ -1,31 +1,10 @@
 **Change Log**
-
-Initial stable release of the application that contains several features:
-* Activity to show justification and prompt user for required permissions
-* Add Foreground service that shows a floating overlay with following capability:
-  * Collapse and expand overlay UI
-  * Quick gestures to decrease volume (single tap), increase volume (double tap), and expand overlay (hold)
-  * Flick gesture to move overlay to the corners of screen (with animation)
-  * Drag icon to allow moving overlay on screen (available in expanded mode)
-* Basic layout for main activity with preferences that allow setting overlay:
-  * Scale factor
-  * Collapse timeout timer value
-  * Transparency level of overlay
-* Material 3 dynamic colour support
-* Dynamic color support for icon
-* Show persistent notification with close action when overlay is visible
-
-
-----
-
-
-**Major Release Candidate Change Log (included in release)**
-
-*V0.9-RC:*
 * Add vertical flicking support for overlay
 * Add M3 colour support to overlay
-* Finalize release pipeline
+* Finalize release process of application
 
+
+**Previous Changes for Major Version**
 *V0.8-RC:*
 * Update name of activity package
 * Add preference storage and support for configuration attributes

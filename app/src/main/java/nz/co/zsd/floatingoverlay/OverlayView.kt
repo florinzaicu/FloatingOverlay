@@ -3,7 +3,7 @@ package nz.co.zsd.floatingoverlay
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.media.AudioManager
 import android.os.Build
@@ -17,8 +17,12 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.core.content.getSystemService
+import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
+import com.google.android.material.color.DynamicColors
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 
@@ -51,20 +55,79 @@ class OverlayView(context: Context) : View(context) {
     // Countdown timer instance that handles auto-collapse functionality
     private var timer: CountDownTimer? = null;
 
-    private fun scaleOverlayButton(id: Int, scale: Float ) {
-        overlay.findViewById<View>(id).updateLayoutParams {
-            width = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
-            height = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+    /**
+     * Check if the device is currently running in dark mode (true) or light (false)
+     * @return Is device running in dark (true) or light (false) mode
+     */
+    private fun isDarkModeOn(): Boolean {
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    /**
+     * Refresh the colors of the overlay. If the device supports dynamic colors, retrieve the M3
+     * color values and apply to overlay components. Otherwise, check if dark or light mode colors
+     * need to be applied.
+     */
+    private fun refreshUIColors() {
+        var bg: Int
+        var fg: Int
+
+        if (isDarkModeOn()) {
+            // Dark mode colours
+            if (DynamicColors.isDynamicColorAvailable()) {
+                // Get dynamic dark mode colors
+                bg = DynamicColors.wrapContextIfAvailable(context)
+                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container)
+                fg = DynamicColors.wrapContextIfAvailable(context)
+                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_primary_container)
+            } else {
+                // Get default dark mode colors
+                bg = context.getColor(R.color.md_theme_dark_primaryContainer)
+                fg = context.getColor(R.color.md_theme_dark_onPrimaryContainer)
+            }
+        } else {
+            // Light mode colours
+            if (DynamicColors.isDynamicColorAvailable()) {
+                // Get dynamic light mode colors
+                bg = DynamicColors.wrapContextIfAvailable(context)
+                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container)
+                fg = DynamicColors.wrapContextIfAvailable(context)
+                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_on_primary_container)
+            } else {
+                // Get default dark mode colors
+                bg = context.getColor(R.color.md_theme_light_primaryContainer)
+                fg = context.getColor(R.color.md_theme_light_onPrimaryContainer)
+            }
+        }
+
+        // Apply dynamic colors to overlay and children (Buttons)
+        overlay.findViewById<View>(R.id.floating_overlay_container).setBackgroundColor(bg)
+        overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
+            if (it is ImageView) {
+                it.setColorFilter(fg)
+            }
         }
     }
 
+    /**
+     * Refresh the overlay UI by re-applying user configuration attributes (scale, color, transparency)
+     */
     fun refreshUI() {
-        scaleOverlayButton(R.id.gestureIcon, PreferenceStorage.getUIScale(context))
-        scaleOverlayButton(R.id.dragIcon, PreferenceStorage.getUIScale(context))
-        scaleOverlayButton(R.id.volumeDown, PreferenceStorage.getUIScale(context))
-        scaleOverlayButton(R.id.volumeUp, PreferenceStorage.getUIScale(context))
-        scaleOverlayButton(R.id.exitOverlay, PreferenceStorage.getUIScale(context))
+        // Scale all of the buttons in the overlay container
+        val scale = PreferenceStorage.getUIScale(context)
+        overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
+            if (it is ImageView) {
+                it.updateLayoutParams {
+                    width = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+                    height = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+                }
+            }
+        }
+
+        // Update the transparency of hte overlay and refresh its colors
         overlay.findViewById<View>(R.id.floating_overlay_container).alpha = PreferenceStorage.getUITransparency(context)
+        refreshUIColors()
     }
 
     /**
@@ -80,7 +143,7 @@ class OverlayView(context: Context) : View(context) {
         windowManager.addView(overlay, layoutParams)
 
         // Initiate and bind a gesture listener to the overlay
-        val floatingOverlayGestListener = object : GestureDetector.SimpleOnGestureListener() {
+        val floatingOverlayGestureListener = object : GestureDetector.SimpleOnGestureListener() {
             /**
              * Override the on down event and return true to consume it (make sure listener is
              * used for other gestures)
@@ -129,13 +192,30 @@ class OverlayView(context: Context) : View(context) {
                 if (!collapsed)
                     return true;
 
-                var flingDirection: Int = if (velocityX < 0) FLING_LEFT else FLING_RIGHT
-                flingOverlay(flingDirection)
+                if (e1 == null) {
+                    Log.w(LOG_TAG, "Could not compute fling direction, first coordinates null!")
+                    return true;
+                }
+
+                // Compute the change in x and y
+                val deltaX = e2.rawX - e1.rawX
+                val deltaY = e2.rawY - e1.rawY
+
+                // Check if fling is more prominent in the x direction (horizontal), otherwise
+                // perform a vertical fling
+                if (abs(deltaX) > abs(deltaY)) {
+                    // Horizontal fling
+                    flingOverlay(if (deltaX < 0) FLING_LEFT else FLING_RIGHT)
+                } else {
+                    // Vertical fling
+                    flingOverlay(if (deltaY < 0) FLING_TOP else FLING_BOTTOM)
+                }
+
                 return true
             }
         }
 
-        val gestureDetector = GestureDetector(context, floatingOverlayGestListener)
+        val gestureDetector = GestureDetector(context, floatingOverlayGestureListener)
         overlay.findViewById<View>(R.id.gestureIcon).setOnTouchListener {_, motionEvent ->
             gestureDetector.onTouchEvent(motionEvent)
         }
@@ -224,22 +304,43 @@ class OverlayView(context: Context) : View(context) {
      * @param direction Direction to fling the screen (see FLING constants)
      */
     private fun flingOverlay(direction: Int) {
-        // Get the size of the screen and decide how to fling it on the x axis
+        // Get the size of the screen and decide how to fling it
         val bounds: Rect = getMaxSize()
-        var x = 0;
+
+        var x = -1;
         if (direction and FLING_LEFT == FLING_LEFT) {
             x = 0
         } else if (direction and FLING_RIGHT == FLING_RIGHT) {
             x = bounds.right
         }
 
-        // Animate flinging the overlay to the new x position
-        ValueAnimator.ofInt(layoutParams.x, x).apply {
-            duration = 300
-            start()
-        }.addUpdateListener {animation ->
-            layoutParams.x = animation.animatedValue as Int
-            windowManager.updateViewLayout(overlay, layoutParams)
+        var y = -1;
+        if (direction and FLING_TOP == FLING_TOP) {
+            y = 0
+        } else if (direction and FLING_BOTTOM == FLING_BOTTOM) {
+            y = bounds.bottom
+        }
+
+        if (x != -1) {
+            // Animate flinging the overlay to the new x position
+            ValueAnimator.ofInt(layoutParams.x, x).apply {
+                duration = 300
+                start()
+            }.addUpdateListener { animation ->
+                layoutParams.x = animation.animatedValue as Int
+                windowManager.updateViewLayout(overlay, layoutParams)
+            }
+        }
+
+        if (y != -1) {
+            // Animate flinging the overlay to the new y position
+            ValueAnimator.ofInt(layoutParams.y, y).apply {
+                duration = 300
+                start()
+            }.addUpdateListener { animation ->
+                layoutParams.y = animation.animatedValue as Int
+                windowManager.updateViewLayout(overlay, layoutParams)
+            }
         }
     }
 
@@ -365,9 +466,7 @@ class OverlayView(context: Context) : View(context) {
 
 
     companion object {
-        /**
-         * Tag to use when logging information to logcat
-         */
+        // Tag to use when logging information to logcat
         private val LOG_TAG: String = OverlayView::class.simpleName ?: "OverlayView"
 
         /**
@@ -386,9 +485,9 @@ class OverlayView(context: Context) : View(context) {
          * 10) 1010 = BOTTOM RIGHT
          * 11) 1011 = BOTTOM CENTER
          */
-        public const val FLING_LEFT = 1;
-        public const val FLING_RIGHT = 2;
-        public const val FLING_TOP = 4;
-        public const val FLING_BOTTOM = 8;
+        const val FLING_LEFT = 1;
+        const val FLING_RIGHT = 2;
+        const val FLING_TOP = 4;
+        const val FLING_BOTTOM = 8;
     }
 }

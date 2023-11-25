@@ -1,6 +1,7 @@
 package nz.co.zsd.floatingoverlay
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.color.DynamicColors
 
 class MainActivity : AppCompatActivity() {
     /**
@@ -50,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
     /**
      * Create am activity result handler for the permission activity to check if we should terminate
      * the app.
@@ -73,13 +74,22 @@ class MainActivity : AppCompatActivity() {
         PermissionCheckActivity.checkPermissions(this, permCheckActivityRes)
 
         // Update the UI to reflect the current settings
-        findViewById<SeekBar>(R.id.overlayUIScale).progress = OVERLAY_SCALE_FACTORS.indexOf(PreferenceStorage.getUIScale(this))
-        findViewById<SeekBar>(R.id.overlayCollapseTimer).progress = PreferenceStorage.getUICollapseTimer(this)
-        findViewById<SeekBar>(R.id.overlayTransparency).progress = OVERLAY_TRANSPARENCY.indexOf(PreferenceStorage.getUITransparency(this))
+        findViewById<SeekBar>(R.id.overlayUIScale).progress =
+            OVERLAY_SCALE_FACTORS.indexOf(PreferenceStorage.getUIScale(this))
+        findViewById<SeekBar>(R.id.overlayCollapseTimer).progress =
+            PreferenceStorage.getUICollapseTimer(this)
+        findViewById<SeekBar>(R.id.overlayTransparency).progress =
+            OVERLAY_TRANSPARENCY.indexOf(PreferenceStorage.getUITransparency(this))
 
-        findViewById<TextView>(R.id.overlayUIScaleValue).text = "${PreferenceStorage.getUIScale(this)}"
-        findViewById<TextView>(R.id.overlayCollapseTimerValue).text = "${PreferenceStorage.getUICollapseTimer(this)}"
-        findViewById<TextView>(R.id.overlayTransparencyValue).text = "${PreferenceStorage.getUITransparency(this)}"
+        findViewById<TextView>(R.id.overlayUIScaleValue).text =
+            "${PreferenceStorage.getUIScale(this)}"
+        findViewById<TextView>(R.id.overlayCollapseTimerValue).text =
+            "${PreferenceStorage.getUICollapseTimer(this)}"
+        findViewById<TextView>(R.id.overlayTransparencyValue).text =
+            "${PreferenceStorage.getUITransparency(this)}"
+
+        // Send a broadcast intent to the overlay service to refresh the UI
+        OverlayService.broadcastRefreshUI(this)
     }
 
     /**
@@ -90,6 +100,10 @@ class MainActivity : AppCompatActivity() {
         startForegroundService(Intent(this, OverlayService::class.java))
     }
 
+    /**
+     * On press of save settings save the overlay UI settings and send a broadcast intent to the overlay
+     * to refresh the UI (apply settings)
+     */
     fun saveUISettings (@Suppress("UNUSED_PARAMETER") v: View) {
         val overlayUIScale = OVERLAY_SCALE_FACTORS[findViewById<SeekBar>(R.id.overlayUIScale).progress]
         val overlayCollapseTimer = findViewById<SeekBar>(R.id.overlayCollapseTimer).progress
@@ -100,13 +114,11 @@ class MainActivity : AppCompatActivity() {
         PreferenceStorage.saveUITransparency(overlayTransparency, this)
 
         // Send a broadcast intent to the overlay service to refresh the UI
-        sendBroadcast(Intent(OverlayService.OVERLAY_SERVICE_ACTION_REFRESH))
+        OverlayService.broadcastRefreshUI(this)
     }
 
     companion object {
-        /**
-         * Tag to use when logging information to logcat
-         */
+        // Tag to use when logging information to logcat
         private val LOG_TAG: String = MainActivity::class.simpleName ?: "MainActivity"
 
         // Map of overlay scale factor float values to seek bar positions

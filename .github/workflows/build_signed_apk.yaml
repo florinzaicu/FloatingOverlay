@@ -74,7 +74,7 @@ jobs:
 
       - name: Build release APK
         if: inputs.compile_type == 'release'
-        run: ./gradlew assembleRelease -Prelease_keystore=../${{ env.KEY_PATH }} -Pkey_alias=app.floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
+        run: ./gradlew assembleRelease -Prelease_keystore=../${{ env.KEY_PATH }} -Pkey_alias=floatingoverlay -Pstore_pass=$STORE_PASS -Pkey_pass=$KEY_PASS
         env:
           STORE_PASS: ${{ secrets.RELEASE_KEYSTORE_PASS }}
           KEY_PASS: ${{ secrets.RELEASE_KEYSTORE_KEY_PASS }}

@@ -16,7 +16,12 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 
+/**
+ * Foreground service that displays the floating overlay. The overlay contains several controls
+ * that allow the user to perform specific actions.
+ */
 class OverlayService : Service() {
+    // Floating overlay view (UI shown on screen)
     private var overlay: OverlayView? = null
 
     /**
@@ -24,23 +29,23 @@ class OverlayService : Service() {
      */
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d(javaClass.simpleName, "Broadcast receiver received a message with action ${intent.action}")
+            Log.d(LOG_TAG, "Broadcast receiver received a message with action ${intent.action}")
             when (intent.action) {
                 // If the action is to exit the service, stop the service
                 OVERLAY_SERVICE_ACTION_EXIT -> {
-                    Log.i(javaClass.simpleName, "Received exit operation, stopping service")
+                    Log.i(LOG_TAG, "Received exit operation, stopping service")
                     context.stopService(Intent(context, OverlayService::class.java))
                 }
 
                 // If the action is to refresh the overlay, refresh the overlay
                 OVERLAY_SERVICE_ACTION_REFRESH -> {
-                    Log.i(javaClass.simpleName, "Received refresh operation, refreshing overlay")
+                    Log.i(LOG_TAG, "Received refresh operation, refreshing overlay")
                     overlay?.refreshUI()
                 }
 
                 // Otherwise log a warning and do nothing
                 else -> {
-                    Log.w(javaClass.simpleName, "Received unknown operation, ignoring")
+                    Log.w(LOG_TAG, "Received unknown operation, ignoring")
                 }
             }
         }
@@ -51,7 +56,7 @@ class OverlayService : Service() {
      */
     override fun onCreate() {
         super.onCreate()
-        Log.d(javaClass.simpleName, "On create called, registering broadcast receiver")
+        Log.d(LOG_TAG, "On create called, registering broadcast receiver")
 
         // Register the broadcast receiver to listen for exit and refresh intents
         ContextCompat.registerReceiver(this, messageReceiver, IntentFilter(
@@ -66,7 +71,7 @@ class OverlayService : Service() {
      * overlay on screen.
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(javaClass.simpleName, "Service on start command called")
+        Log.d(LOG_TAG, "Service on start command called")
         try {
             // Display the overlay on screen
             showOverlay()
@@ -113,10 +118,10 @@ class OverlayService : Service() {
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 && e is ForegroundServiceStartNotAllowedException) {
-                Log.e(this::class.simpleName, "Foreground service not allowed error thrown");
+                Log.e(LOG_TAG, "Foreground service not allowed error thrown");
             } else {
-                Log.e(this::class.simpleName, "Error starting foreground service");
-                Log.e(this::class.simpleName, "Error: ${e.message}")
+                Log.e(LOG_TAG, "Error starting foreground service");
+                Log.e(LOG_TAG, "Error: ${e.message}")
                 e.printStackTrace()
             }
         }
@@ -135,7 +140,7 @@ class OverlayService : Service() {
      * Show the floating overlay on screen if not already visible (instance not already set)
      */
     private fun showOverlay() {
-        Log.d(javaClass.simpleName, "Showing service overlay")
+        Log.d(LOG_TAG, "Showing service overlay")
 
         // If the overlay already exists don't create a new instance
         if (overlay != null) return
@@ -146,7 +151,7 @@ class OverlayService : Service() {
      * On destroy of the notification service clean up and hide the floating overlay
      */
     override fun onDestroy() {
-        Log.d(javaClass.simpleName, "Service OnDestroy called, cleaning up")
+        Log.d(LOG_TAG, "Service OnDestroy called, cleaning up")
 
         // Unregister the broadcast receiver, hide the overlay and stop the foreground service
         unregisterReceiver(messageReceiver)
@@ -159,7 +164,7 @@ class OverlayService : Service() {
      */
     private fun hideOverlay() {
         if (overlay == null) return
-        Log.d(javaClass.simpleName, "SERVICE: Hiding overlay (not null)")
+        Log.d(LOG_TAG, "SERVICE: Hiding overlay (not null)")
 
         // Restore the brightness and destroy the old overlay
         overlay!!.destroy()
@@ -167,18 +172,18 @@ class OverlayService : Service() {
     }
 
     companion object {
+        // Tag to use when logging information to logcat
+        private val LOG_TAG: String = OverlayView::class.simpleName ?: "OverlayService"
+
         /**
          * Broadcast intent action that tells the service to stop showing the overlay
          */
         const val OVERLAY_SERVICE_ACTION_EXIT       = "nz.co.zsd.floatingoverlay.SERVICE.EXIT"
         const val OVERLAY_SERVICE_ACTION_REFRESH    = "nz.co.zsd.floatingoverlay.SERVICE.REFRESH"
 
-        /**
-         * Broadcast intent that tells the floating overlay service to perform an action. See
-         * following list of actions for list of supported operations.
-         */
-        const val OPERATION             = "Operation"
-        const val OPERATION_EXIT        = 0
-        const val OPERATION_REFRESH     = 1
+        fun broadcastRefreshUI (context: Context) {
+            // Send a broadcast intent to the overlay service to refresh the UI
+            context.sendBroadcast(Intent(OVERLAY_SERVICE_ACTION_REFRESH))
+        }
     }
 }

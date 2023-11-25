@@ -11,8 +11,8 @@ android {
         applicationId = "nz.co.zsd.floatingoverlay"
         minSdk = 28
         targetSdk = 34
-        versionCode = 8
-        versionName = "0.8"
+        versionCode = 9
+        versionName = "0.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

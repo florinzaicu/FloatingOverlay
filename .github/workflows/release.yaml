@@ -1,23 +1,23 @@
-name: Build and Release RC Signed APK
-run-name: Build and Release RC Signed APK
+name: Build and Release Major Version Signed APK
+run-name: Build and Release Major Version Signed APK
 on:
   workflow_dispatch:
   push:
     branches:
-      - develop
+      - master
 jobs:
-  # Build debug (RC) APK
-  build_debug_apk:
+  # Build release APK
+  build_release_apk:
     uses: ./.github/workflows/build_signed_apk.yaml
     with:
-      compile_type: debug
+      compile_type: release
     secrets: inherit
 
-  # Release published RC APK
-  release_rc:
+  # Release published APK
+  release:
     runs-on: ubuntu-latest
     needs:
-      build_debug_apk
+      build_release_apk
     steps:
       # Check out project and download compiled artifact
       - name: Checkout project
@@ -26,17 +26,17 @@ jobs:
       - name: Download compiled APK artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ needs.build_debug_apk.outputs.apk_name }}
+          name: ${{ needs.build_release_apk.outputs.apk_name }}
 
-      - name: "Create a new RC release (Version: ${{ needs.build_debug_apk.outputs.app_version }})"
+      - name: "Create a new major release (Version: ${{ needs.build_release_apk.outputs.app_version }})"
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ needs.build_debug_apk.outputs.app_version }}
-          release_name: Release ${{ needs.build_debug_apk.outputs.apk_name }} (${{ needs.build_debug_apk.outputs.app_major_version }})
-          body_path: CHANGELOG_RC.md
+          tag_name: ${{ needs.build_release_apk.outputs.app_version }}
+          release_name: Release ${{ needs.build_release_apk.outputs.apk_name }} (${{ needs.build_release_apk.outputs.app_major_version }})
+          body_path: CHANGELOG.md
           draft: false
-          prerelease: true
+          prerelease: false
           commitish: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -45,8 +45,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ needs.build_debug_apk.outputs.apk_name }}
-          asset_name: ${{ needs.build_debug_apk.outputs.apk_name }}
+          asset_path: ${{ needs.build_release_apk.outputs.apk_name }}
+          asset_name: ${{ needs.build_release_apk.outputs.apk_name }}
           asset_content_type: application/apk
         env:
           GITHUB_TOKEN: ${{ github.token }}
