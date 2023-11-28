@@ -86,11 +86,11 @@ class OverlayService : Service() {
             )
 
             val notification = NotificationCompat.Builder(this, "1")
-                .setContentTitle("Displaying Overlay")
-                .setContentText("Floating volume controls are currently visible")
+                .setContentTitle(getString(R.string.overlay_serv_notif_title))
+                .setContentText(getString(R.string.overlay_serv_notif_text))
                 .setSmallIcon(R.drawable.ic_logo_circ_mono)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-                .addAction(R.drawable.ic_close, "Close", pendingExitIntent)
+                .addAction(R.drawable.ic_close, getString(R.string.overlay_serv_notif_close_action), pendingExitIntent)
 
             // If the current version is Android O and above, create a notification chanel and add
             // it to the notification
@@ -98,7 +98,7 @@ class OverlayService : Service() {
                 notification.setChannelId(packageName)
                 val channel = NotificationChannel(
                     packageName,
-                    "Overlay Service Notifications",
+                    getString(R.string.overlay_serv_notif_channel),
                     NotificationManager.IMPORTANCE_DEFAULT
                 )
                 val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

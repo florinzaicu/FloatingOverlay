@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<SeekBar>(R.id.overlayUIScale).setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                findViewById<TextView>(R.id.overlayUIScaleValue).text = "${OVERLAY_SCALE_FACTORS[progress]}"
+                findViewById<TextView>(R.id.overlayUIScaleValue).text = "${formatFloat(OVERLAY_SCALE_FACTORS[progress])}"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<SeekBar>(R.id.overlayTransparency).setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                findViewById<TextView>(R.id.overlayTransparencyValue).text = "${OVERLAY_TRANSPARENCY[progress]}"
+                findViewById<TextView>(R.id.overlayTransparencyValue).text = "${formatFloat(OVERLAY_TRANSPARENCY[progress])}"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -61,6 +61,15 @@ class MainActivity : AppCompatActivity() {
             Log.i(LOG_TAG,"Permission check activity returned terminate res, stopping app.")
             finish()
         }
+    }
+
+    /**
+     * Format a float value to a string with one decimal place, respecting the default local
+     * @args value: Float value to format
+     * @return Formatted string with one decimal place
+     */
+    private fun formatFloat(value: Float): String {
+        return String.format(resources.configuration.locales.get(0), "%.1f", value)
     }
 
     /**
@@ -82,11 +91,11 @@ class MainActivity : AppCompatActivity() {
             OVERLAY_TRANSPARENCY.indexOf(PreferenceStorage.getUITransparency(this))
 
         findViewById<TextView>(R.id.overlayUIScaleValue).text =
-            "${PreferenceStorage.getUIScale(this)}"
+            "${formatFloat(PreferenceStorage.getUIScale(this))}"
         findViewById<TextView>(R.id.overlayCollapseTimerValue).text =
             "${PreferenceStorage.getUICollapseTimer(this)}"
         findViewById<TextView>(R.id.overlayTransparencyValue).text =
-            "${PreferenceStorage.getUITransparency(this)}"
+            "${formatFloat(PreferenceStorage.getUITransparency(this))}"
 
         // Send a broadcast intent to the overlay service to refresh the UI
         OverlayService.broadcastRefreshUI(this)

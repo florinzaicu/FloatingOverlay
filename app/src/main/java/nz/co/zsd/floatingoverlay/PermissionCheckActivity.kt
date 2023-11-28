@@ -113,7 +113,7 @@ class PermissionCheckActivity : AppCompatActivity() {
                     Log.i(LOG_TAG, "Request permission result, notify permission denied")
                     Snackbar.make(this,
                         findViewById(R.id.notify_perm_img),
-                        "Notification permission was denied!",
+                        getString(R.string.perm_notify_denied),
                         Snackbar.LENGTH_LONG
                     ).show()
                 }

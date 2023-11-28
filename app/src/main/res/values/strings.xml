@@ -1,4 +1,5 @@
 <resources>
+    <!-- Name of the application -->
     <string name="app_name">Floating Overlay</string>
 
     <!-- Main activity strings -->
@@ -34,7 +35,6 @@
         This app requires extra permissions to be able to run. If the permissions are not granted
         the application will not work on your device.
     </string>
-    <string name="perm_req_modify_btn">Grant Permission</string>
 
     <string name="perm_req_notify">Display Persistent Notification</string>
     <string name="perm_req_notify_msg">
@@ -64,4 +64,13 @@
     </string>
 
     <string name="perm_req_exit_msg">If you wish to close the application please press the back button.</string>
+    <string name="perm_req_modify_btn">Grant Permission</string>
+
+    <string name="perm_notify_denied">Notification permission was denied!</string>
+
+    <!-- Overlay service strings -->
+    <string name="overlay_serv_notif_title">Overlay Visible</string>
+    <string name="overlay_serv_notif_text">Floating controls overlay is currently visible</string>
+    <string name="overlay_serv_notif_close_action">Close</string>
+    <string name="overlay_serv_notif_channel">Overlay Service Notifications</string>
 </resources>
