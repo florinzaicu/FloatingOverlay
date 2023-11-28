@@ -1,11 +1,15 @@
 # About
 
+**Floating Overlay**
+
+![App Logo](RESOURCES/README_IMAGES/icon.png)
+
 **Supported Android Versions:** 28 (Android 9 / Pie) - 34 (Android 14 / Upside Down Cake)
 
 Repository contains source code of the Floating Overlay Android app. The app
 shows an overlay on the screen (drawn on top of other apps), that allows changing
-the current relevant system volume through gestures (single/double tap on the overlay),
-or pressing on the overlay buttons (when expanded).
+the current relevant system volume through gestures (single/double tap on the
+overlay), or pressing on the overlay buttons (when expanded).
 
 The most relevant volume is modified, which depends on what the phone is currently
 doing. For example, if music is playing, the overlay will increase/decrease the
@@ -26,6 +30,7 @@ overlay on the screen.
 versions of Android) that indicates when the service/overlay is active.
 * Draw on top of Apps - The app uses this permissions to show the floating
 overlay.
+
 
 
 ## Guide
@@ -98,3 +103,56 @@ The following gestures are supported by the overlay (performed on the gesture ic
 * Double press - increases system volume
 * Press and Hold - expand overlay
 * Flick - move the overlay to the corner of the screen based on the flick direction.
+
+*Collapsed preview of overlay (dynamic colours dark green):*
+
+![Main Activity Dark Green](RESOURCES/README_IMAGES/overlay_colappsed.png)
+
+*Expanded preview of overlay (dynamic colours dark green):*
+
+![Main Activity Dark Green](RESOURCES/README_IMAGES/overlay_exp.png)
+
+
+
+## Showcase
+
+This section showcases the UI and functionality of the application.
+
+
+### Icons
+
+![App Icon Square Color](RESOURCES/README_IMAGES/icon_square_color.png)
+![App Icon Circular Color](RESOURCES/README_IMAGES/icon_circ_color.png)
+
+
+*Light Mode Dynamic Colours:*
+
+![App Icon Square Dynamic Color Light Blue](RESOURCES/README_IMAGES/icon_square_dyn_light_blue.png)
+![App Icon Square Dynamic Color Light Green](RESOURCES/README_IMAGES/icon_square_dyn_light_green.png)
+![App Icon Square Dynamic Color Light Yellow](RESOURCES/README_IMAGES/icon_square_dyn_light_yellow.png)
+![App Icon Square Dynamic Color Light Red](RESOURCES/README_IMAGES/icon_square_dyn_light_red.png)
+
+
+*Dark Mode Dynamic colours:*
+
+![App Icon Square Dynamic Color Dark Blue](RESOURCES/README_IMAGES/icon_square_dyn_dark_blue.png)
+![App Icon Square Dynamic Color Dark Green](RESOURCES/README_IMAGES/icon_square_dyn_dark_green.png)
+![App Icon Square Dynamic Color Dark Yellow](RESOURCES/README_IMAGES/icon_square_dyn_dark_yellow.png)
+![App Icon Square Dynamic Color Dark Red](RESOURCES/README_IMAGES/icon_square_dyn_dark_red.png)
+
+
+
+### Permission Check Activity
+
+![Permission Check Activity Light Blue](RESOURCES/README_IMAGES/activity_perm_check_light_blue.png)
+![Permission Check Activity Dark Green](RESOURCES/README_IMAGES/activity_perm_Check_dark_green.png)
+![Permission Check Activity Dark Blue](RESOURCES/README_IMAGES/activity_perm_check_dark_blue.png)
+
+
+### Main Activity
+
+![Main Activity Light Default](RESOURCES/README_IMAGES/activity_main_light_default.png)
+![Main Activity Dark Default](RESOURCES/README_IMAGES/activity_main_night_default.png)
+
+
+![Main Activity Dark Green](RESOURCES/README_IMAGES/activity_main_dark_green.png)
