@@ -65,6 +65,12 @@ class PermissionCheckActivity : AppCompatActivity() {
         finish()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        setResult(KILL_APPLICATION)
+        finish()
+        return true
+    }
+
     /**
      * On press of grant permissions button request the required missing system permissions in
      * order they appear on UI. User needs to press several times to grant the system permissions

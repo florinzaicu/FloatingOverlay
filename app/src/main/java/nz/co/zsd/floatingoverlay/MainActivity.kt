@@ -4,13 +4,17 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     /**
@@ -124,6 +128,48 @@ class MainActivity : AppCompatActivity() {
 
         // Send a broadcast intent to the overlay service to refresh the UI
         OverlayService.broadcastRefreshUI(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId ) {
+            // Check for update menu item was selected
+            R.id.menu_check_update -> {
+                Snackbar.make(this,
+                    findViewById(R.id.main_container),
+                    getString(R.string.feature_not_implemented),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                true;
+            }
+
+            // Info menu item was selected
+            R.id.menu_info -> {
+                Snackbar.make(this,
+                    findViewById(R.id.main_container),
+                    getString(R.string.feature_not_implemented),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                true;
+            }
+
+            // Settings menu item was selected
+            R.id.menu_settings -> {
+                Snackbar.make(this,
+                    findViewById(R.id.main_container),
+                    getString(R.string.feature_not_implemented),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                true;
+            }
+
+            // Default call parent
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {

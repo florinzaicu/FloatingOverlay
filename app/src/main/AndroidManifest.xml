@@ -23,9 +23,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="33">
-        <activity
-            android:name=".PermissionCheckActivity"
-            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
@@ -34,6 +31,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".PermissionCheckActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
         </activity>
 
         <!-- Register the floating overlay service -->

@@ -3,65 +3,72 @@
     <!-- Name of the application -->
     <string name="app_name">Comenzi Suprapuse</string>
 
+    <!-- Menu strings -->
+    <string name="menu_settings">Setări</string>
+    <string name="menu_check_update">Caută Actualizări</string>
+    <string name="menu_info">Despre</string>
+    <string name="feature_not_implemented">Funcționalitatea nu este implementată</string>
+
     <!-- Main activity strings -->
-    <string name="main_instructions_heading">Cum să Utilizezi</string>
+    <string name="main_instructions_heading">Instrucțiuni de Utilizare</string>
     <string name="main_instructions_text">
-        Această aplicație arată un meniu de comandă suprapus care permite utilizatorului să schimbe
-        volumul sistemului. Aplicația folosește un serviciu de prin-plan pentru a afișa meniul de
-        comandă deasupra altor aplicații. Meniul suprapus poate fi închis prin apăsarea butonului de
-        ieșire din meniu (vizualizare extinsă) sau prin apăsarea butonului de închidere afișat în
-        notificarea persistentă a serviciului de prim-plan.
+        Această aplicație arată o interfață pe ecran care permite utilizatorului să schimbe volumul
+        sistemului. Pentru a funcționa, aplicația folosește un serviciu de prim-plan. Interfața
+        cu comenzi, și implicit serviciul de prin-plan, pot fi închise prin apăsarea pictogramei de
+        ieșire afișată pe interfață (vizualizare extinsă), sau prin apăsarea butonului de îieșire
+        afișat în notificarea persistentă a serviciului.
         \n\n
-        Meniul poate fi extins prin apăsarea îndelungată a pictogramei de gesturi. O singură apăsare
-        pe pictogramă va crește volumul sistemului, în timp ce o dublă apăsare va scădea volumul.
-        Meniul poate fi mutat dintr-o parte în alta a ecranului prin efectuarea unui gest de glisare
-        pe pictograma de gesturi (vizualizare micșorată).
+        Interfața suprapusă poate fi extinsă prin apăsarea îndelungată a pictogramei de gesturi. O
+        singură apăsare pe pictograma de gesturi va crește volumul sistemului, în timp ce o dublă
+        apăsare va scădea volumul. Interfața poate fi mutată dintr-o parte în cealtă a ecranului prin
+        efectuarea unui gest de glisare pe pictograma de gesturi (vizualizare micșorată).
         \n\n
-        Meniul de comandă poate fi mutat manual pe ecran prin intermediul pictogramei de mutare
+        Interfața cu comenzi poate fi mutată manual pe ecran prin intermediul pictogramei de mutare
         (vizualizare extinsă).
         \n\n
-        Pentru a afișa meniul, apăsați butonul de „Afișează Comenzi Suprapuse”.
+        Pentru a afișa interfața cu comenzi, apăsați butonul de „Afișează Comenzi Suprapuse”.
     </string>
-    <string name="main_show_overlay_btn">"Afișează Comenzi Suprapuse"</string>
+    <string name="main_show_overlay_btn">Afișează Comenzi Suprapuse</string>
 
     <!-- Main activity setting UI string -->
     <string name="overlay_ui_scale">Factor Mărime</string>
     <string name="overlay_ui_scale_placeholder">1,0</string>
     <string name="overlay_timer_collapse">Timp de Micșorare</string>
     <string name="overlay_timer_collapse_placeholder">1</string>
-    <string name="overlay_transparency">Transparență Meniu</string>
+    <string name="overlay_transparency">Transparență Interfață</string>
     <string name="overlay_transparency_placeholder">1,0</string>
-    <string name="overlay_save_settings_btn">Salvează Setări</string>
+    <string name="overlay_save_settings_btn">Aplică Setări</string>
 
     <!-- Permissions actvity strings -->
     <string name="perm_req_heading">Permisiuni Necesare</string>
     <string name="perm_req_message">
         Aceasă aplicație necesită permisiuni extra pentru a funcționa. Dacă permisiunile sunt
-        refuzate, această aplicatie nu va funcționa pe dispozitivul dumneavoastră.
+        refuzate, această aplicație nu va funcționa pe dispozitivul dumneavoastră.
     </string>
 
-    <string name="perm_req_notify">Arată Notificare Persistentă</string>
+    <string name="perm_req_notify">Arată Notificări</string>
     <string name="perm_req_notify_msg">
-        Această aplicație arată o notificare persistentă în timp ce meniul de comandă suprapus este
-        vizibil.
+        Această aplicație folosețte permisiunea de notificare pentru a arăta o notificare persistentă
+        atunci când servicul de prim-plan și interfața suprapusă sunt active.
     </string>
     <string name="perm_granted_notify_msg">
         Ați permis permisiunea de notificare! Această aplicație va folosi această permisiune pentru
-        a arată o notificare persistentă în timp ce meniul de comandă suprapus este vizibil.
+        a arată o notificare persistentă în timp ce interfața cu comenzi este vizibilă.
     </string>
 
-    <string name="perm_req_foreground">Servici de Rulare în Prim-Plan</string>
+    <string name="perm_req_foreground">Rulează Servici de Prim-Plan</string>
     <string name="perm_req_foreground_msg">
-        Această aplicație folosește un serviciu de prim-plan pentru a afișa meniul de comandă.
+        Această aplicație folosește un serviciu de prim-plan pentru a afișa interfața cu comenzi
+        deasupra celorlalte aplicații.
     </string>
     <string name="perm_granted_foreground_msg">
         Ați permis permisiunea de serviciu de prim-plan! Această aplicație folosește un serviciu de
-        prim-plan pentru a afișa meniul de comandă.
+        prim-plan pentru a afișa interfața cu comenzi.
     </string>
 
     <string name="perm_req_overlay">Apare Deasupra</string>
     <string name="perm_req_overlay_msg">
-        Această aplicație va arăta un meniu de comandă suprapus deasupra altor aplicații.
+        Această aplicație va arăta o interfață suprapusă cu comenzi, deasupra altor aplicații.
     </string>
     <string name="perm_granted_overlay_msg">
         Ați permis permisiunea de a apărea deasupra! Această aplicație va arăta un meniu de comandă
@@ -69,15 +76,15 @@
     </string>
 
     <string name="perm_req_exit_msg">
-        Dacă doriți să închideți aplicația apăsați butonl de înapoi a dispozitivului.
+        Dacă doriți să închideți aplicația apăsați butonl de înapoi a telefonului.
     </string>
     <string name="perm_req_modify_btn">Permite Permisiuni</string>
 
     <string name="perm_notify_denied">Permisiunea de notificare a fost refuzată!</string>â
 
     <!-- Overlay service strings -->
-    <string name="overlay_serv_notif_title">Meniu Vizibile</string>
-    <string name="overlay_serv_notif_text">Meniul de comenzi suprapuse este vizibil pe ecran</string>
+    <string name="overlay_serv_notif_title">Interfață Vizibilă</string>
+    <string name="overlay_serv_notif_text">Interfața suprapusă cu comenzi este vizibilă pe ecran</string>
     <string name="overlay_serv_notif_close_action">Închide</string>
-    <string name="overlay_serv_notif_channel">Notificări Comenzi Suprapuse</string>
+    <string name="overlay_serv_notif_channel">Notificari Comenzi Suprapuse</string>
 </resources>
