@@ -30,7 +30,13 @@
     </string>
     <string name="main_show_overlay_btn">Afișează Comenzi Suprapuse</string>
 
-    <!-- Main activity setting UI string -->
+    <!-- Fragment Labels -->
+    <string name="frag_title_settings">Setări</string>
+    <string name="frag_title_perm_req">Permisiuni Necesare</string>
+
+    <!-- Setting Fragment String -->
+    <string name="settings_frag_desc">Modifică setări interfață suprapusă</string>
+
     <string name="overlay_ui_scale">Factor Mărime</string>
     <string name="overlay_ui_scale_placeholder">1,0</string>
     <string name="overlay_timer_collapse">Timp de Micșorare</string>
