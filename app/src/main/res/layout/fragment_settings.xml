@@ -121,10 +121,36 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/update_settings_btn"
+            android:id="@+id/save_settings_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/overlay_save_settings_btn" />
+            android:text="@string/settings_save_settings_btn" />
+
+        <Button
+            android:id="@+id/reset_settings_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/settings_reset_settings_btn" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_item_spacing"
+            android:layout_marginBottom="@dimen/material_item_spacing" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:justificationMode="inter_word"
+            android:layout_marginBottom="@dimen/material_item_spacing"
+            android:text="@string/settings_overlay_preview_lbl" />
+
+        <include layout="@layout/overlay_layout"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
     </LinearLayout>
 </ScrollView>

@@ -43,7 +43,12 @@
     <string name="overlay_timer_collapse_placeholder">1</string>
     <string name="overlay_transparency">Transparență Interfață</string>
     <string name="overlay_transparency_placeholder">1,0</string>
-    <string name="overlay_save_settings_btn">Aplică Setări</string>
+    <string name="settings_save_settings_btn">Aplică Setări</string>
+    <string name="settings_reset_settings_btn">Resetă Setări</string>
+    <string name="settings_overlay_preview_lbl">
+        Previzualizați setările interfeței suprapuse înainte de aplicare.
+        Pentru a aplica setările interfeței suprapuse, apăsați pe buttonul \„Aplică Setări\”.
+    </string>
 
     <!-- Permissions actvity strings -->
     <string name="perm_req_heading">Permisiuni Necesare</string>

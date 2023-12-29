@@ -39,7 +39,12 @@
     <string name="overlay_timer_collapse_placeholder">1</string>
     <string name="overlay_transparency">Overlay Transparency</string>
     <string name="overlay_transparency_placeholder">1.0</string>
-    <string name="overlay_save_settings_btn">Save Settings</string>
+    <string name="settings_save_settings_btn">Save Settings</string>
+    <string name="settings_reset_settings_btn">Reset Settings</string>
+    <string name="settings_overlay_preview_lbl">
+        Preview your overlay setting before applying.
+        To apply the settings to the floating overlay, press on the \"Save Settings\" button.
+    </string>
 
     <!-- Permissions activity strings -->
     <string name="perm_req_heading">Permission Required</string>

@@ -30,6 +30,43 @@ import kotlin.math.roundToInt
  * View that defines the components of the floating overlay and its controls
  */
 class OverlayView(context: Context) : View(context) {
+
+    /**
+     * Class that defines the style attributes of the floating overlay UI
+     */
+    public class OverlayUIAttributes {
+        /**
+         * Scale factor to apply to the UI where 1.0 is 100% or default scale
+         */
+        var scale: Float = 1.0f
+
+        /**
+         * Alpha of the UI (transparency) where 1.0 is 100% visible and 0.0 is 0% visible
+         */
+        var transparency: Float = 1.0f
+
+        /**
+         * Initiate config object with configuration values
+         * @param scale Scale of the UI (1.0 is 100% or default scale)
+         * @param transparency Alpha to apply to the floating overlay where 1.0 = fully visible
+         */
+        constructor(scale: Float, transparency: Float) {
+            this.scale = scale
+            this.transparency = transparency
+        }
+
+        /**
+         * Initiate config object with the current UI configuration saved setting values (shared
+         * preferences).
+         * @param context Current context of the application (used to retrieve shared pref setting values)
+         */
+        constructor(context: Context) {
+            this.scale = PreferenceStorage.getUIScale(context)
+            this.transparency = PreferenceStorage.getUITransparency(context)
+        }
+    }
+
+
     // Window manager that displays the overlay
     private val windowManager = context.getSystemService<WindowManager>()!!
     // Instance of the overlay currently displayed on the window manager
@@ -56,78 +93,10 @@ class OverlayView(context: Context) : View(context) {
     private var timer: CountDownTimer? = null;
 
     /**
-     * Check if the device is currently running in dark mode (true) or light (false)
-     * @return Is device running in dark (true) or light (false) mode
-     */
-    private fun isDarkModeOn(): Boolean {
-        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
-    }
-
-    /**
-     * Refresh the colors of the overlay. If the device supports dynamic colors, retrieve the M3
-     * color values and apply to overlay components. Otherwise, check if dark or light mode colors
-     * need to be applied.
-     */
-    private fun refreshUIColors() {
-        var bg: Int
-        var fg: Int
-
-        if (isDarkModeOn()) {
-            // Dark mode colours
-            if (DynamicColors.isDynamicColorAvailable()) {
-                // Get dynamic dark mode colors
-                bg = DynamicColors.wrapContextIfAvailable(context)
-                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container)
-                fg = DynamicColors.wrapContextIfAvailable(context)
-                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_primary_container)
-            } else {
-                // Get default dark mode colors
-                bg = context.getColor(R.color.md_theme_dark_primaryContainer)
-                fg = context.getColor(R.color.md_theme_dark_onPrimaryContainer)
-            }
-        } else {
-            // Light mode colours
-            if (DynamicColors.isDynamicColorAvailable()) {
-                // Get dynamic light mode colors
-                bg = DynamicColors.wrapContextIfAvailable(context)
-                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container)
-                fg = DynamicColors.wrapContextIfAvailable(context)
-                    .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_on_primary_container)
-            } else {
-                // Get default dark mode colors
-                bg = context.getColor(R.color.md_theme_light_primaryContainer)
-                fg = context.getColor(R.color.md_theme_light_onPrimaryContainer)
-            }
-        }
-
-        // Apply dynamic colors to overlay and children (Buttons)
-        overlay.findViewById<View>(R.id.floating_overlay_container).setBackgroundColor(bg)
-        overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
-            if (it is ImageView) {
-                it.setColorFilter(fg)
-            }
-        }
-    }
-
-    /**
      * Refresh the overlay UI by re-applying user configuration attributes (scale, color, transparency)
      */
     fun refreshUI() {
-        // Scale all of the buttons in the overlay container
-        val scale = PreferenceStorage.getUIScale(context)
-        overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
-            if (it is ImageView) {
-                it.updateLayoutParams {
-                    width = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
-                    height = (resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
-                }
-            }
-        }
-
-        // Update the transparency of hte overlay and refresh its colors
-        overlay.findViewById<View>(R.id.floating_overlay_container).alpha = PreferenceStorage.getUITransparency(context)
-        refreshUIColors()
+        updateStyle(overlay, context, OverlayUIAttributes(context))
     }
 
     /**
@@ -379,7 +348,6 @@ class OverlayView(context: Context) : View(context) {
         windowManager.removeView(overlay)
     }
 
-    /* ----- Collapse overlay methods ----- */
 
     /**
      * Collapse the overlay controls by hiding all icons (expect the drag icon), clear the collapse
@@ -489,5 +457,90 @@ class OverlayView(context: Context) : View(context) {
         const val FLING_RIGHT = 2;
         const val FLING_TOP = 4;
         const val FLING_BOTTOM = 8;
+
+
+        // ---------- Helper functions that refresh visual settings of floating overlay ----------
+
+        /**
+         * Check if the device is currently running in dark mode (true) or light (false)
+         * @param context Current application context
+         * @return Is device running in dark (true) or light (false) mode
+         */
+        private fun isDarkModeOn(context: Context): Boolean {
+            val nightModeFlags = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+        }
+
+        /**
+         * Update the style of a floating overlay by applying UI configuration attributes (scale, color,
+         * transparency) to the view (container).
+         * @param overlay Container view of the floating overlay
+         * @param context Current context of the application
+         * @param config Configuration attributes to apply to the overlay
+         */
+        fun updateStyle(overlay: View, context: Context, config: OverlayUIAttributes) {
+            // Scale all of the buttons in the overlay container
+            val scale = config.scale
+            overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
+                if (it is ImageView) {
+                    it.updateLayoutParams {
+                        width = (context.resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+                        height = (context.resources.getDimension(R.dimen.float_overlay_btn_base_size) * scale).roundToInt()
+                    }
+                }
+            }
+
+            // Update the transparency of hte overlay and refresh its colors
+            overlay.findViewById<View>(R.id.floating_overlay_container).alpha = config.transparency
+            refreshUIColors(overlay, context)
+        }
+
+        /**
+         * Refresh the colors of the overlay. If the device supports dynamic colors, retrieve the M3
+         * color values and apply to overlay components. Otherwise, check if dark or light mode colors
+         * need to be applied.
+         * @param overlay Container view of the floating overlay
+         * @param context Current context of the application
+         */
+        private fun refreshUIColors(overlay: View, context: Context) {
+            var bg: Int
+            var fg: Int
+
+            if (isDarkModeOn(context)) {
+                // Dark mode colours
+                if (DynamicColors.isDynamicColorAvailable()) {
+                    // Get dynamic dark mode colors
+                    bg = DynamicColors.wrapContextIfAvailable(context)
+                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container)
+                    fg = DynamicColors.wrapContextIfAvailable(context)
+                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_primary_container)
+                } else {
+                    // Get default dark mode colors
+                    bg = context.getColor(R.color.md_theme_dark_primaryContainer)
+                    fg = context.getColor(R.color.md_theme_dark_onPrimaryContainer)
+                }
+            } else {
+                // Light mode colours
+                if (DynamicColors.isDynamicColorAvailable()) {
+                    // Get dynamic light mode colors
+                    bg = DynamicColors.wrapContextIfAvailable(context)
+                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container)
+                    fg = DynamicColors.wrapContextIfAvailable(context)
+                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_on_primary_container)
+                } else {
+                    // Get default dark mode colors
+                    bg = context.getColor(R.color.md_theme_light_primaryContainer)
+                    fg = context.getColor(R.color.md_theme_light_onPrimaryContainer)
+                }
+            }
+
+            // Apply dynamic colors to overlay and children (Buttons)
+            overlay.findViewById<View>(R.id.floating_overlay_container).setBackgroundColor(bg)
+            overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
+                if (it is ImageView) {
+                    it.setColorFilter(fg)
+                }
+            }
+        }
     }
 }
