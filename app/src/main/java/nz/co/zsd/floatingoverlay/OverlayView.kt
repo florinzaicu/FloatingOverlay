@@ -1,6 +1,7 @@
 package nz.co.zsd.floatingoverlay
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -46,13 +47,23 @@ class OverlayView(context: Context) : View(context) {
         var transparency: Float = 1.0f
 
         /**
+         * Colour choice to apply to the floating overlay (0 - 2):
+         *      0 = Primary Container
+         *      1 = Secondary Container
+         *      2 = Tertiary Container
+         */
+        var colourChoice: Int = 0
+
+        /**
          * Initiate config object with configuration values
          * @param scale Scale of the UI (1.0 is 100% or default scale)
          * @param transparency Alpha to apply to the floating overlay where 1.0 = fully visible
+         * @param colourChoice Colour choice to apply to the floating overlay (0 - 2):
          */
-        constructor(scale: Float, transparency: Float) {
+        constructor(scale: Float, transparency: Float, colourChoice: Int) {
             this.scale = scale
             this.transparency = transparency
+            this.colourChoice = colourChoice
         }
 
         /**
@@ -63,9 +74,24 @@ class OverlayView(context: Context) : View(context) {
         constructor(context: Context) {
             this.scale = PreferenceStorage.getUIScale(context)
             this.transparency = PreferenceStorage.getUITransparency(context)
+            this.colourChoice = PreferenceStorage.getUIColourChoice(context)
         }
     }
 
+    /**
+     * Class that defines the colours of the floating overlay UI (bg and fg)
+     */
+    public class OverlayUIColours {
+        /**
+         * Background colour of the floating overlay
+         */
+        public var bg: Int = 0;
+
+        /**
+         * Foreground colour of the floating overlay
+         */
+        public var fg: Int = 0;
+    }
 
     // Window manager that displays the overlay
     private val windowManager = context.getSystemService<WindowManager>()!!
@@ -412,7 +438,7 @@ class OverlayView(context: Context) : View(context) {
      */
     private fun getMaxSize(): Rect {
         // Get the size of the screen (canvas) to move the overlay
-        var rect = Rect(0, 0, 0, 0)
+        val rect = Rect(0, 0, 0, 0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             rect.right = windowManager.maximumWindowMetrics.bounds.width()
             rect.bottom = windowManager.maximumWindowMetrics.bounds.height()
@@ -492,53 +518,133 @@ class OverlayView(context: Context) : View(context) {
 
             // Update the transparency of hte overlay and refresh its colors
             overlay.findViewById<View>(R.id.floating_overlay_container).alpha = config.transparency
-            refreshUIColors(overlay, context)
+
+            // Apply colors to overlay and children (Buttons)
+            val colour = getOverlayColour(config.colourChoice, context)
+            overlay.findViewById<View>(R.id.floating_overlay_container).setBackgroundColor(colour.bg)
+            overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
+                if (it is ImageView) {
+                    it.setColorFilter(colour.fg)
+                }
+            }
         }
 
         /**
-         * Refresh the colors of the overlay. If the device supports dynamic colors, retrieve the M3
-         * color values and apply to overlay components. Otherwise, check if dark or light mode colors
-         * need to be applied.
-         * @param overlay Container view of the floating overlay
+         * Get the colours to apply to the overlay UI based on the colour choice (0 - 2)
+         * @param colourChoice Colour choice to apply to the floating overlay (0 - 2)
          * @param context Current context of the application
+         * @return Overlay colours to apply to the UI (Overlay UI Colours object)
          */
-        private fun refreshUIColors(overlay: View, context: Context) {
-            var bg: Int
-            var fg: Int
+        @SuppressLint("PrivateResource")
+        public fun getOverlayColour(colourChoice: Int, context: Context): OverlayUIColours {
+            // Check if system supports dynamic colours or if we should use default theme
+            if (DynamicColors.isDynamicColorAvailable()) {
+                // Dynamic colours supported (use dynamic system colours)
+                when (colourChoice) {
+                    // Secondary colour
+                    1 -> return OverlayUIColours().apply {
+                        bg = DynamicColors.wrapContextIfAvailable(context)
+                            .getColor(
+                                if (isDarkModeOn(context))
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_secondary_container
+                                else
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_light_secondary_container
+                            )
+                        fg = DynamicColors.wrapContextIfAvailable(context)
+                            .getColor(
+                                if (isDarkModeOn(context))
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_secondary_container
+                                else
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_light_on_secondary_container
+                            )
+                    }
 
-            if (isDarkModeOn(context)) {
-                // Dark mode colours
-                if (DynamicColors.isDynamicColorAvailable()) {
-                    // Get dynamic dark mode colors
-                    bg = DynamicColors.wrapContextIfAvailable(context)
-                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container)
-                    fg = DynamicColors.wrapContextIfAvailable(context)
-                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_primary_container)
-                } else {
-                    // Get default dark mode colors
-                    bg = context.getColor(R.color.md_theme_dark_primaryContainer)
-                    fg = context.getColor(R.color.md_theme_dark_onPrimaryContainer)
+                    // Tertiary colour
+                    2 -> return OverlayUIColours().apply {
+                        bg = DynamicColors.wrapContextIfAvailable(context)
+                            .getColor(
+                                if (isDarkModeOn(context))
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_tertiary_container
+                                else
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_light_tertiary_container
+                            )
+                        fg = DynamicColors.wrapContextIfAvailable(context)
+                            .getColor(
+                                if (isDarkModeOn(context))
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_tertiary_container
+                                else
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_light_on_tertiary_container
+                            )
+                    }
+
+                    // Primary or default colour
+                    else -> return OverlayUIColours().apply {
+                        bg = DynamicColors.wrapContextIfAvailable(context)
+                            .getColor(
+                                if (isDarkModeOn(context))
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_primary_container
+                                else
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container
+                            )
+                        fg = DynamicColors.wrapContextIfAvailable(context)
+                            .getColor(
+                                if (isDarkModeOn(context))
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_dark_on_primary_container
+                                else
+                                    com.google.android.material.R.color.m3_sys_color_dynamic_light_on_primary_container
+                            )
+                    }
                 }
             } else {
-                // Light mode colours
-                if (DynamicColors.isDynamicColorAvailable()) {
-                    // Get dynamic light mode colors
-                    bg = DynamicColors.wrapContextIfAvailable(context)
-                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_primary_container)
-                    fg = DynamicColors.wrapContextIfAvailable(context)
-                        .getColor(com.google.android.material.R.color.m3_sys_color_dynamic_light_on_primary_container)
-                } else {
-                    // Get default dark mode colors
-                    bg = context.getColor(R.color.md_theme_light_primaryContainer)
-                    fg = context.getColor(R.color.md_theme_light_onPrimaryContainer)
-                }
-            }
+                // Dynamic colours not supported (use default colours)
+                when (colourChoice) {
+                    // Secondary colour
+                    1 -> return OverlayUIColours().apply {
+                        bg = context.getColor(
+                                if (isDarkModeOn(context))
+                                    R.color.md_theme_dark_secondaryContainer
+                                else
+                                    R.color.md_theme_light_secondaryContainer
+                            )
+                        fg = context.getColor(
+                            if (isDarkModeOn(context))
+                                R.color.md_theme_dark_onSecondaryContainer
+                            else
+                                R.color.md_theme_light_onSecondaryContainer
+                        )
+                    }
 
-            // Apply dynamic colors to overlay and children (Buttons)
-            overlay.findViewById<View>(R.id.floating_overlay_container).setBackgroundColor(bg)
-            overlay.findViewById<LinearLayout>(R.id.floating_overlay_container).children.forEach {
-                if (it is ImageView) {
-                    it.setColorFilter(fg)
+                    // Tertiary colour
+                    2 -> return OverlayUIColours().apply {
+                        bg = context.getColor(
+                            if (isDarkModeOn(context))
+                                R.color.md_theme_dark_tertiaryContainer
+                            else
+                                R.color.md_theme_light_tertiaryContainer
+                        )
+                        fg = context.getColor(
+                            if (isDarkModeOn(context))
+                                R.color.md_theme_dark_onTertiaryContainer
+                            else
+                                R.color.md_theme_light_onTertiaryContainer
+                        )
+                    }
+
+                    // Primary or default colour
+                    else -> return OverlayUIColours().apply {
+                        bg = context.getColor(
+                            if (isDarkModeOn(context))
+                                R.color.md_theme_dark_primaryContainer
+                            else
+                                R.color.md_theme_light_primaryContainer
+                        )
+                        fg = context.getColor(
+                            if (isDarkModeOn(context))
+                                R.color.md_theme_dark_onPrimaryContainer
+                            else
+                                R.color.md_theme_light_onPrimaryContainer
+                        )
+                    }
                 }
             }
         }

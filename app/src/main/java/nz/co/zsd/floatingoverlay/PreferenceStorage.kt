@@ -1,6 +1,5 @@
 package nz.co.zsd.floatingoverlay
 
-import android.R
 import android.content.Context
 import android.content.SharedPreferences
 
@@ -22,6 +21,7 @@ sealed class PreferenceStorage {
         private const val UI_SCALE: String = "Overlay.Scale"
         private const val UI_COLLAPSE_TIMER: String = "Overlay.CollapseTimer"
         private const val UI_TRANSPARENCY: String = "Overlay.Transparency"
+        private const val UI_COLOUR_CHOICE: String = "Overlay.ColourChoice"
 
         /**
          * Get an instance of the current application shared preferences storage container. Mode
@@ -52,6 +52,16 @@ sealed class PreferenceStorage {
          * @return Overlay transparency (defaults to 1.0 or no transparency)
          */
         fun getUITransparency(context: Context) = getSharedPref(context).getFloat(UI_TRANSPARENCY, 1.0f)
+
+        /**
+         * Get the current colour choice to apply to the overlay (0 - 2):
+         *      0 = Primary Container
+         *      1 = Secondary Container
+         *      2 = Tertiary Container
+         * @param context Current context of the application
+         * @return Overlay colour choice (defaults to 1 or primary)
+         */
+        fun getUIColourChoice(context: Context) = getSharedPref(context).getInt(UI_COLOUR_CHOICE, 0)
 
         /**
          * Update the scale factor to apply to the UI overlay
@@ -86,7 +96,7 @@ sealed class PreferenceStorage {
 
         /**
          * Update the transparency to apply to the UI overlay
-         * @param scale New transparency to apply to the floating overlay (alpha 0 - 1.0)
+         * @param alpha New transparency to apply to the floating overlay (alpha 0 - 1.0)
          * @param context Current context of the application to retrieve settings
          * @throws IllegalArgumentException transparency is invalid
          */
@@ -96,6 +106,21 @@ sealed class PreferenceStorage {
 
             val editor = getSharedPref(context).edit()
             editor.putFloat(UI_TRANSPARENCY, alpha)
+            editor.commit()
+        }
+
+        /**
+         * Update the colour choice of the overlay
+         * @param colourChoice New colour choice to apply to the overlay (0 - 2)
+         * @param context Current context of the application to save settings
+         * @throws IllegalArgumentException colour choice is invalid
+         */
+        fun saveUIColourChoice (colourChoice: Int, context: Context) {
+            if (colourChoice < 0 || colourChoice > 2)
+                throw IllegalArgumentException("Colour choice needs to be between 0 and 2")
+
+            val editor = getSharedPref(context).edit()
+            editor.putInt(UI_COLOUR_CHOICE, colourChoice)
             editor.commit()
         }
     }

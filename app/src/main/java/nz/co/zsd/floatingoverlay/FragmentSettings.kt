@@ -1,10 +1,13 @@
 package nz.co.zsd.floatingoverlay
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -72,6 +75,8 @@ class FragmentSettings: Fragment() {
             resetSettings()
         })
 
+        // Radio button group checked listeners to update the preview overlay colours
+        layout.findViewById<RadioGroup>(R.id.overlay_colour_rg).setOnCheckedChangeListener {_, _ -> updateOverlayPreview()}
         return layout
     }
 
@@ -89,6 +94,7 @@ class FragmentSettings: Fragment() {
         val defaultOverlayScale = PreferenceStorage.getUIScale(requireContext())
         val defaultOverlayCollapseTimer = PreferenceStorage.getUICollapseTimer(requireContext())
         val defaultOverlayTransparency = PreferenceStorage.getUITransparency(requireContext())
+        val defaultOverlayColourChoice = PreferenceStorage.getUIColourChoice(requireContext())
 
         val scale = savedInstanceState?.getInt(
             BUNDLE_OVERLAY_SCALE, OVERLAY_SCALE_FACTORS.indexOf(defaultOverlayScale)
@@ -102,11 +108,15 @@ class FragmentSettings: Fragment() {
                 BUNDLE_OVERLAY_TRANSPARENCY, OVERLAY_TRANSPARENCY.indexOf(defaultOverlayTransparency)
         ) ?: OVERLAY_TRANSPARENCY.indexOf(defaultOverlayTransparency)
 
+        val colorChoice = savedInstanceState?.getInt(
+            BUNDLE_OVERLAY_COLOUR_CHOICE, defaultOverlayColourChoice
+        ) ?: defaultOverlayColourChoice
 
         // Update the UI to reflect the current settings
         view.findViewById<SeekBar>(R.id.overlayUIScale).progress = scale
         view.findViewById<SeekBar>(R.id.overlayCollapseTimer).progress = collapseTimer
         view.findViewById<SeekBar>(R.id.overlayTransparency).progress = transparency
+        view.findViewById<RadioButton>(OVERLAY_COLOUR_CHOICE_ID[colorChoice]).isChecked = true
 
         view.findViewById<TextView>(R.id.overlayUIScaleValue).text =
             formatFloat(OVERLAY_SCALE_FACTORS[scale])
@@ -114,6 +124,22 @@ class FragmentSettings: Fragment() {
             "$collapseTimer"
         view.findViewById<TextView>(R.id.overlayTransparencyValue).text =
             formatFloat(OVERLAY_TRANSPARENCY[transparency])
+
+        // Update the overlay colour selection backgrounds and foreground
+        var colour = OverlayView.getOverlayColour(0, requireContext())
+        view.findViewById<RadioButton>(R.id.overlay_colour_prim_rb).setBackgroundColor(colour.bg)
+        view.findViewById<RadioButton>(R.id.overlay_colour_prim_rb).buttonTintList = ColorStateList.valueOf(colour.fg)
+        view.findViewById<RadioButton>(R.id.overlay_colour_prim_rb).setTextColor(colour.fg)
+
+        colour = OverlayView.getOverlayColour(1, requireContext())
+        view.findViewById<RadioButton>(R.id.overlay_colour_sec_rb).setBackgroundColor(colour.bg)
+        view.findViewById<RadioButton>(R.id.overlay_colour_sec_rb).buttonTintList = ColorStateList.valueOf(colour.fg)
+        view.findViewById<RadioButton>(R.id.overlay_colour_sec_rb).setTextColor(colour.fg)
+
+        colour = OverlayView.getOverlayColour(2, requireContext())
+        view.findViewById<RadioButton>(R.id.overlay_colour_tert_rb).setBackgroundColor(colour.bg)
+        view.findViewById<RadioButton>(R.id.overlay_colour_tert_rb).buttonTintList = ColorStateList.valueOf(colour.fg)
+        view.findViewById<RadioButton>(R.id.overlay_colour_tert_rb).setTextColor(colour.fg)
     }
 
     /**
@@ -124,6 +150,7 @@ class FragmentSettings: Fragment() {
         super.onResume()
         Log.d(LOG_TAG,"Resumed fragment, updating preview and broadcasting overlay refresh")
 
+        // Broadcast refresh message to the overlay and update preview
         OverlayService.broadcastRefreshUI(requireContext())
         updateOverlayPreview()
     }
@@ -151,6 +178,16 @@ class FragmentSettings: Fragment() {
         return String.format(resources.configuration.locales.get(0), "%.1f", value)
     }
 
+    private fun getSelectedColourChoice(view: View): Int {
+        return if (view.findViewById<RadioButton>(R.id.overlay_colour_sec_rb).isChecked) {
+            1
+        } else if (view.findViewById<RadioButton>(R.id.overlay_colour_tert_rb).isChecked) {
+            2
+        } else {
+            0
+        }
+    }
+
     /**
      * Update the overlay preview to reflect the current UI setting values defined by the user.
      */
@@ -160,9 +197,14 @@ class FragmentSettings: Fragment() {
 
         val scale = OVERLAY_SCALE_FACTORS[requireView().findViewById<SeekBar>(R.id.overlayUIScale).progress]
         val transparency = OVERLAY_TRANSPARENCY[requireView().findViewById<SeekBar>(R.id.overlayTransparency).progress]
+        val colourChoice = getSelectedColourChoice(requireView())
 
         // Update the style of the preview overlay by applying the input fields UI setting values
-        OverlayView.updateStyle(overlay, requireContext(), OverlayView.OverlayUIAttributes(scale, transparency))
+        OverlayView.updateStyle(
+            overlay,
+            requireContext(),
+            OverlayView.OverlayUIAttributes(scale, transparency, colourChoice)
+        )
     }
 
     /**
@@ -173,10 +215,12 @@ class FragmentSettings: Fragment() {
         val scaleProgress = requireView().findViewById<SeekBar>(R.id.overlayUIScale).progress
         val collapseTimerProgress = requireView().findViewById<SeekBar>(R.id.overlayCollapseTimer).progress
         val transparencyProgress = requireView().findViewById<SeekBar>(R.id.overlayTransparency).progress
+        val colourChoice = getSelectedColourChoice(requireView())
 
         PreferenceStorage.saveUIScale(OVERLAY_SCALE_FACTORS[scaleProgress], requireContext())
         PreferenceStorage.saveCollapseTimer(collapseTimerProgress, requireContext())
         PreferenceStorage.saveUITransparency(OVERLAY_TRANSPARENCY[transparencyProgress], requireContext())
+        PreferenceStorage.saveUIColourChoice(colourChoice, requireContext())
 
         // Send a broadcast intent to the overlay service to refresh the UI
         OverlayService.broadcastRefreshUI(requireContext())
@@ -193,6 +237,9 @@ class FragmentSettings: Fragment() {
             PreferenceStorage.getUICollapseTimer(requireContext())
         requireView().findViewById<SeekBar>(R.id.overlayTransparency).progress =
             OVERLAY_TRANSPARENCY.indexOf(PreferenceStorage.getUITransparency(requireContext()))
+        requireView().findViewById<RadioButton>(
+            OVERLAY_COLOUR_CHOICE_ID[PreferenceStorage.getUIColourChoice(requireContext())]
+        ).isChecked = true
 
         requireView().findViewById<TextView>(R.id.overlayUIScaleValue).text =
             formatFloat(PreferenceStorage.getUIScale(requireContext()))
@@ -223,9 +270,17 @@ class FragmentSettings: Fragment() {
             0.1f, 0.2f, 0.4f, 0.6f, 0.8f, 1.0f
         )
 
+        /**
+         * Map of the overlay colour choice form controls IDs
+         */
+        private val OVERLAY_COLOUR_CHOICE_ID: List<Int> = listOf(
+            R.id.overlay_colour_prim_rb, R.id.overlay_colour_sec_rb, R.id.overlay_colour_tert_rb
+        )
+
         // Constant IDs of input field values to save in bundled state (restore form state on resume)
         private const val BUNDLE_OVERLAY_SCALE = "overlay_scale"
         private const val BUNDLE_OVERLAY_COLLAPSE_TIMER = "overlay_collapse_timer"
         private const val BUNDLE_OVERLAY_TRANSPARENCY = "overlay_transparency"
+        private const val BUNDLE_OVERLAY_COLOUR_CHOICE = "overlay_colour_choice"
     }
 }
