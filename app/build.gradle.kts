@@ -11,8 +11,8 @@ android {
         applicationId = "nz.co.zsd.floatingoverlay"
         minSdk = 28
         targetSdk = 34
-        versionCode = 14
-        versionName = "1.4"
+        versionCode = 15
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -82,4 +82,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("androidx.navigation:navigation-dynamic-features-fragment:2.7.5")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.5")
+
+    // Make HTTP requests
+    implementation("com.android.volley:volley:1.2.1")
 }

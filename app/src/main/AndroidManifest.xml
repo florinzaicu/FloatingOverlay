@@ -11,6 +11,8 @@
         android:minSdkVersion="33" />
     <!-- Draw on-top of other apps (create overlay) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Internet access to check for and download updates -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".FloatingOverlayApp"

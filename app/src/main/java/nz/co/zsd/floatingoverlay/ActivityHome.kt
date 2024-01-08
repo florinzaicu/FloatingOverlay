@@ -9,10 +9,16 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.Volley
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collect
+import nz.co.zsd.floatingoverlay.Data.RelaseInfo
+import nz.co.zsd.floatingoverlay.Data.ReleaseInfoData
 
 /**
  * Home activity of the application that hosts the fragments and application toolbar. The app uses
@@ -23,6 +29,17 @@ import com.google.android.material.snackbar.Snackbar
  * fragment!
  */
 class ActivityHome : AppCompatActivity() {
+    /**
+     * Volley request queue used to make HTTP requests
+     */
+    private var netQueue: RequestQueue? = null
+
+    /**
+     * Release information view model that stores current release info retrieved from github API
+     */
+    private val releaseInfoVM: RelaseInfo by lazy {
+        ViewModelProvider(this)[RelaseInfo::class.java]
+    }
 
     /**
      * On create of the main activity, inflate the layout and configure the app toolbar
@@ -64,6 +81,13 @@ class ActivityHome : AppCompatActivity() {
         val fragContainer = supportFragmentManager.findFragmentById(R.id.main_fragment_container) as NavHostFragment
         val navController = fragContainer.navController
         setupActionBarWithNavController(navController)
+
+        // Configure network queue
+        netQueue = Volley.newRequestQueue(this)
+
+        releaseInfoVM.get().observe(this) { releaseInfo ->
+            Log.i("TTT", "QQQRelease: ${releaseInfo.name}")
+        }
     }
 
     override fun onResume() {
@@ -74,6 +98,14 @@ class ActivityHome : AppCompatActivity() {
         if (FragmentPermissionReq.hasRequiredPermissions(this) == false) {
             findNavController(R.id.main_fragment_container).navigate(R.id.fragmentPermissionReq);
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(LOG_TAG, "Paused main activity. Cancelling network requests")
+
+        // Cancel any pending network requests
+        netQueue?.cancelAll(LOG_TAG)
     }
 
     /**
@@ -100,15 +132,13 @@ class ActivityHome : AppCompatActivity() {
             }
 
             // Check for update menu item was selected
-            /*R.id.menu_check_update -> {
-                Snackbar.make(this,
-                    findViewById(R.id.main_fragment_container),
-                    getString(R.string.feature_not_implemented),
-                    Snackbar.LENGTH_LONG
-                ).show()
+            R.id.menu_check_update -> {
+                Log.e(LOG_TAG, "Checking for updates")
+                netQueue?.add(FragmentUpdate.checkForUpdates(applicationContext))
                 true;
             }
 
+            /*
             // Info menu item was selected
             R.id.menu_info -> {
                 Snackbar.make(this,
