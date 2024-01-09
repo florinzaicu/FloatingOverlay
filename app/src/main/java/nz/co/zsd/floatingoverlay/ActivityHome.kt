@@ -8,17 +8,20 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.android.volley.RequestQueue
+import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 import nz.co.zsd.floatingoverlay.Data.RelaseInfo
 import nz.co.zsd.floatingoverlay.Data.ReleaseInfoData
+import org.json.JSONObject
 
 /**
  * Home activity of the application that hosts the fragments and application toolbar. The app uses
@@ -84,10 +87,6 @@ class ActivityHome : AppCompatActivity() {
 
         // Configure network queue
         netQueue = Volley.newRequestQueue(this)
-
-        releaseInfoVM.get().observe(this) { releaseInfo ->
-            Log.i("TTT", "QQQRelease: ${releaseInfo.name}")
-        }
     }
 
     override fun onResume() {
@@ -117,6 +116,62 @@ class ActivityHome : AppCompatActivity() {
     }
 
     /**
+     * Callback triggered on a successful response from an update check API call. The handler will
+     * check if the latest version is newer than the current installed version (update available).
+     * If an update exists, the user is asked if they wish to view more details. On an affirmative
+     * response, the user is redirected to the update fragment.
+     */
+    private val checkUpdateSuccess: (obj: RelaseInfo) -> Unit = {
+        obj ->
+            Log.i(LOG_TAG, "${obj.data.value?.name}")
+            if (obj.isValid() && obj.isNewerVersion(this)) {
+                Log.i(LOG_TAG, "Update found, prompting user if they wish to install")
+
+                // Build and display an alert dialog to prompt the user if they wish to view
+                // more details about the available update
+                AlertDialog.Builder(this)
+                .setMessage(
+                    String.format(getString(R.string.frag_update_promt_msg),
+                        packageManager.getPackageInfo(packageName, 0).versionName,
+                        obj.getVersion()
+                    )
+                )
+                .setTitle(R.string.frag_update_promt_title)
+                .setPositiveButton(R.string.frag_update_promt_btn_confirm) { _, _ ->
+                    Log.i(LOG_TAG, "User wants to view update details")
+                    val fragContainer =
+                        supportFragmentManager.findFragmentById(R.id.main_fragment_container) as NavHostFragment
+                    val navController = fragContainer.navController
+                    if (navController.currentBackStackEntry?.destination?.id != R.id.fragmentUpdateInfo)
+                        navController.navigate(R.id.fragmentUpdateInfo)
+
+                    // Update the release info view model with the new release info
+                    releaseInfoVM.data.value = obj.data.value
+                }
+                .setNegativeButton(R.string.frag_update_promt_btn_cancel) { _, _ ->
+                    Log.i(LOG_TAG, "User cancelled update")
+                }
+                .create().show()
+            } else {
+                Log.i(LOG_TAG, "No update available")
+            }
+    }
+
+    /**
+     * Callback triggered on an error response from the check for update API call. The handler will
+     * display an error message to the user to notify them of the failure. No further actions taken.
+     */
+    private val checkUpdateError: (msg: String) -> Unit = {
+        msg ->
+            Log.e(LOG_TAG, "Error: $msg")
+            Snackbar.make(
+                findViewById(R.id.main_fragment_container),
+                getString(R.string.frag_update_check_error),
+                Snackbar.LENGTH_LONG
+            ).show()
+    }
+
+    /**
      * Listener triggered on toolbar action press. Navigate to the pressed option menu item
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -134,7 +189,7 @@ class ActivityHome : AppCompatActivity() {
             // Check for update menu item was selected
             R.id.menu_check_update -> {
                 Log.e(LOG_TAG, "Checking for updates")
-                netQueue?.add(FragmentUpdate.checkForUpdates(applicationContext))
+                netQueue?.add(FragmentUpdate.checkForUpdates(checkUpdateSuccess, checkUpdateError))
                 true;
             }
 
@@ -163,7 +218,6 @@ class ActivityHome : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 
     companion object {
         // Tag to use when logging information to logcat

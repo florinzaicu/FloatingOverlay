@@ -27,18 +27,7 @@ public class RelaseInfo: ViewModel() {
     //private val _state = MutableStateFlow(ReleaseInfoData())
     //private val state: StateFlow<ReleaseInfoData> = _state.asStateFlow()
 
-    private val data = MutableLiveData<ReleaseInfoData>()
-    
-    //private val _state = MutableLiveData<ReleaseInfoData>()
-    //private val data: LiveData<ReleaseInfoData> get() = _state
-
-    /**
-     * Get the current release info state
-     * @return Release information state flow object that contains values
-     */
-    public fun get(): LiveData<ReleaseInfoData> {
-        return data
-    }
+    public val data = MutableLiveData<ReleaseInfoData>()
 
     public fun loadFromJSON(obj: JSONObject) {
         var name: String? = null
@@ -104,15 +93,28 @@ public class RelaseInfo: ViewModel() {
      */
     public fun isValid(): Boolean {
         return (
-            (get().isInitialized) &&
-            (get().value?.name?.isNotEmpty() == true) &&
-            (get().value?.tag?.isNotEmpty() == true) &&
-            (get().value?.note?.isNotEmpty() == true) &&
-            (get().value?.publishTime != null) &&
-            (get().value?.apkName?.isNotEmpty() == true) &&
-            (get().value?.apkUrl?.isNotEmpty() == true) &&
-            (get().value?.apkSize != null && get().value?.apkSize!! > 0)
+            (data.isInitialized) &&
+            (data.value?.name?.isNotEmpty() == true) &&
+            (data.value?.tag?.isNotEmpty() == true) &&
+            (data.value?.note?.isNotEmpty() == true) &&
+            (data.value?.publishTime != null) &&
+            (data.value?.apkName?.isNotEmpty() == true) &&
+            (data.value?.apkUrl?.isNotEmpty() == true) &&
+            (data.value?.apkSize != null && data.value?.apkSize!! > 0)
         )
+    }
+
+    /**
+     * Get the version of the latest release as a string. If latest release is an RC, "(RC)" added
+     * to end of returned version string.
+     * @return Version of latest release in format major.minor
+     */
+    public fun getVersion(): String {
+        val ver = splitVersion()
+        return if (ver[2] == true)
+            "${ver[0]}.${ver[1]}-RC"
+        else
+            "${ver[0]}.${ver[1]}"
     }
 
     /**
@@ -124,10 +126,10 @@ public class RelaseInfo: ViewModel() {
      * @return List of objects representing the major, minor and RC flag
      */
     public fun splitVersion(): List<Any?> {
-        val tok = get().value?.tag?.split(".")
+        val tok = data.value?.tag?.split(".")
         val major = tok?.get(0)?.substring(1)?.toInt()
         val minor = tok?.get(1)?.split("-")?.get(0)?.toInt()
-        val isRC = get().value?.tag?.contains("-RC") ?: false
+        val isRC = data.value?.tag?.contains("-RC") ?: false
 
         // Return list describing version
         return listOf ( major, minor, isRC)

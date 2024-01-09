@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_fragmentHome_to_fragmentSettings"
             app:destination="@id/fragmentSettings" />
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentUpdateInfo"
+            app:destination="@id/fragmentUpdateInfo" />
     </fragment>
     <fragment
         android:id="@+id/fragmentSettings"
@@ -25,10 +28,22 @@
         <action
             android:id="@+id/action_fragmentSettings_to_fragmentPermissionReq"
             app:destination="@id/fragmentPermissionReq" />
+        <action
+            android:id="@+id/action_fragmentSettings_to_fragmentUpdateInfo"
+            app:destination="@id/fragmentUpdateInfo" />
     </fragment>
     <fragment
         android:id="@+id/fragmentPermissionReq"
         android:name="nz.co.zsd.floatingoverlay.FragmentPermissionReq"
         tools:layout="@layout/fragment_permission_req"
         android:label="@string/frag_title_perm_req" />
+    <fragment
+        android:id="@+id/fragmentUpdateInfo"
+        android:name="nz.co.zsd.floatingoverlay.FragmentUpdate"
+        tools:layout="@layout/fragment_update_info"
+        android:label="Update Available">
+        <action
+            android:id="@+id/action_fragmentUpdateInfo_to_fragmentPermissionReq"
+            app:destination="@id/fragmentPermissionReq" />
+    </fragment>
 </navigation>

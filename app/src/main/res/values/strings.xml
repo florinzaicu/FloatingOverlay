@@ -90,4 +90,10 @@
     <string name="overlay_serv_notif_text">Floating controls overlay is currently visible</string>
     <string name="overlay_serv_notif_close_action">Close</string>
     <string name="overlay_serv_notif_channel">Overlay Service Notifications</string>
+
+    <string name="frag_update_check_error">An error occurred while checking for an update.\nPlease try again later.</string>
+    <string name="frag_update_promt_title">Update Available</string>
+    <string name="frag_update_promt_msg">An update is available for the app. Do you wish to view more details?\n\nInstalled Version: %s\nNew Version: %s</string>
+    <string name="frag_update_promt_btn_confirm">View Details</string>
+    <string name="frag_update_promt_btn_cancel">Cancel</string>
 </resources>

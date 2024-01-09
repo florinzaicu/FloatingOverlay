@@ -98,4 +98,10 @@
     <string name="overlay_serv_notif_text">Interfața suprapusă cu comenzi este vizibilă pe ecran</string>
     <string name="overlay_serv_notif_close_action">Închide</string>
     <string name="overlay_serv_notif_channel">Notificari Comenzi Suprapuse</string>
+
+    <string name="frag_update_check_error">O eroare a fost detectată în timp ce se căutau actualizări.\nVă rugăm să încercați din nou mai târziu.</string>
+    <string name="frag_update_promt_title">Actualizare Găsită</string>
+    <string name="frag_update_promt_msg">Sa găsit o actualizare pentru aplicație. Doriți să vedeți mai multe detali?\n\nVersiune Instalată: %s\nVersiune Nouă: %s</string>
+    <string name="frag_update_promt_btn_confirm">Vezi Detali</string>
+    <string name="frag_update_promt_btn_cancel">Anulează</string>
 </resources>
