@@ -104,4 +104,14 @@
     <string name="frag_update_promt_msg">Sa găsit o actualizare pentru aplicație. Doriți să vedeți mai multe detali?\n\nVersiune Instalată: %s\nVersiune Nouă: %s</string>
     <string name="frag_update_promt_btn_confirm">Vezi Detali</string>
     <string name="frag_update_promt_btn_cancel">Anulează</string>
+
+    <!-- Update Info Fragment Strings -->
+    <string name="frag_update_info_error_msg">Informațiile de actualizare sunt invalide!</string>
+    <string name="frag_update_info_update_ver_lbl">Versiune Nouă: %s</string>
+    <string name="frag_update_info_current_ver_lbl">Versiune Instalată: %s</string>
+    <string name="frag_update_info_download_size_lbl">Mărime Actualizare: %s</string>
+    <string name="frag_update_info_update_btn">Descarcă și Actualizeză</string>
+    <string name="frag_update_info_changelog_error">
+        <b>An error occurred while retrieving the update details.\nPlease try to recheck for updates!</b>
+    </string>
 </resources>

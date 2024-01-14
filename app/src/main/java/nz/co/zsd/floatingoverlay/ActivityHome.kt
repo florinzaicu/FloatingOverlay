@@ -1,13 +1,11 @@
 package nz.co.zsd.floatingoverlay
 
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -15,13 +13,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.android.volley.RequestQueue
-import com.android.volley.Response
 import com.android.volley.toolbox.Volley
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.collect
-import nz.co.zsd.floatingoverlay.Data.RelaseInfo
-import nz.co.zsd.floatingoverlay.Data.ReleaseInfoData
-import org.json.JSONObject
+import nz.co.zsd.floatingoverlay.Data.ReleaseInfo
 
 /**
  * Home activity of the application that hosts the fragments and application toolbar. The app uses
@@ -40,9 +34,7 @@ class ActivityHome : AppCompatActivity() {
     /**
      * Release information view model that stores current release info retrieved from github API
      */
-    private val releaseInfoVM: RelaseInfo by lazy {
-        ViewModelProvider(this)[RelaseInfo::class.java]
-    }
+    private val releaseInfoVM: ReleaseInfo by viewModels()
 
     /**
      * On create of the main activity, inflate the layout and configure the app toolbar
@@ -121,7 +113,7 @@ class ActivityHome : AppCompatActivity() {
      * If an update exists, the user is asked if they wish to view more details. On an affirmative
      * response, the user is redirected to the update fragment.
      */
-    private val checkUpdateSuccess: (obj: RelaseInfo) -> Unit = {
+    private val checkUpdateSuccess: (obj: ReleaseInfo) -> Unit = {
         obj ->
             Log.i(LOG_TAG, "${obj.data.value?.name}")
             if (obj.isValid() && obj.isNewerVersion(this)) {
@@ -189,7 +181,7 @@ class ActivityHome : AppCompatActivity() {
             // Check for update menu item was selected
             R.id.menu_check_update -> {
                 Log.e(LOG_TAG, "Checking for updates")
-                netQueue?.add(FragmentUpdate.checkForUpdates(checkUpdateSuccess, checkUpdateError))
+                netQueue?.add(FragmentUpdate.genLatestReleaseReq(checkUpdateSuccess, checkUpdateError))
                 true;
             }
 

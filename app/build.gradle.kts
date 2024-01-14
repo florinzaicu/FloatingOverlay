@@ -85,4 +85,7 @@ dependencies {
 
     // Make HTTP requests
     implementation("com.android.volley:volley:1.2.1")
+
+    // Render Markdown to HTML to display latest release info
+    implementation("io.noties.markwon:core:4.6.2")
 }

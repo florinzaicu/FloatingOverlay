@@ -10,10 +10,45 @@
         android:padding="@dimen/activity_horizontal_margin">
 
         <TextView
+            android:id="@+id/newAppVer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/material_item_spacing_small"
+            android:text="@string/frag_update_info_update_ver_lbl" />
+
+        <TextView
+            android:id="@+id/currentAppVer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/material_item_spacing_small"
+            android:text="@string/frag_update_info_current_ver_lbl" />
+
+        <TextView
+            android:id="@+id/downloadSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/frag_update_info_download_size_lbl" />
+
+        <Button
+            android:id="@+id/downloadUpdateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/material_item_spacing"
+            android:text="@string/frag_update_info_update_btn" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_item_spacing"
+            android:layout_marginBottom="@dimen/material_item_spacing" />
+
+        <TextView
+            android:id="@+id/updateChangeLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:justificationMode="inter_word"
-            android:text="@string/frag_update_promt_title" />
+            android:text="@string/frag_update_info_changelog_placeholder" />
 
     </LinearLayout>
 </ScrollView>

@@ -96,4 +96,35 @@
     <string name="frag_update_promt_msg">An update is available for the app. Do you wish to view more details?\n\nInstalled Version: %s\nNew Version: %s</string>
     <string name="frag_update_promt_btn_confirm">View Details</string>
     <string name="frag_update_promt_btn_cancel">Cancel</string>
+
+    <!-- Update Info Fragment Strings -->
+    <string name="frag_update_info_error_msg">Latest release info is invalid!</string>
+    <string name="frag_update_info_update_ver_lbl">New Version: %s</string>
+    <string name="frag_update_info_current_ver_lbl">Installed Version: %s</string>
+    <string name="frag_update_info_download_size_lbl">Update Size: %s</string>
+    <string name="frag_update_info_update_btn">Download and Update</string>
+    <string name="frag_update_info_changelog_placeholder" translatable="false">
+        Change Log\n
+        \n
+        * Change 1\n
+        * Change 2\n
+        * Change 3\n
+        \n
+        Previous Changes for Major Version\n
+        \n
+        * V0.2:\n
+        \n
+        * Older change 1\n
+        * Older change 2\n
+        * Older change 3\n
+        \n
+        * V0.1:\n
+        \n
+        * Older older change 1\n
+        * Older older change 2\n
+        * Older older change 3\n
+    </string>
+    <string name="frag_update_info_changelog_error">
+        <b>An error occurred while retrieving the update details.\nPlease try to recheck for updates!</b>
+    </string>
 </resources>
